@@ -6,12 +6,10 @@ Ideas:
 
 - Use a Raspberry Pi Zero W (USB powered device) to act as USB storage for a Tesla.
 - Use the Pi to serve a web interface accessible from the in car browser.
-- Let the user setup sync of mp4 clips stored by the car to external services (OneDrive, home local NAS/PC device)
+- Let the user setup sync of video clips stored by the car to external services (OneDrive, home local NAS/PC device)
 - Reverse syncing of music to the Pi, for in car usage.
 - Let the setup process be a painless as possible - There are users without Linux experience out there.
-
-
-If possible: Provide streamable access to the mp4 clips via WiFi on the move.
+- Provide streamable access to the video clips via WiFi on the move; Create WiFi in Ad-Hoc AP mode, web interface to display/delete/archive videos.
 
 ## Inspiration
 
