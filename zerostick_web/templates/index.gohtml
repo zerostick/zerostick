@@ -1,0 +1,15 @@
+{{template "header"}}
+
+<form method="POST" enctype="multipart/form-data">
+    <label for="idx-f">Some action</label>
+    <input type="text" id="idx-f" name="test">
+    <br>
+    <input type="submit">
+</form>
+
+{{if .}}
+<h1>Here are the contents of the file:</h1>
+{{.}}
+{{end}}
+
+{{template "footer"}}
