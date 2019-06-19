@@ -22,7 +22,7 @@ zerostick: certs
 	go build -a -o $(programname) *.go
 
 certs:
-	if [ ! -d zerostick_web/certs ]; then /generate_certs.sh; fi
+	if [ ! -d zerostick_web/certs ]; then ./generate_certs.sh; fi
 
 install:
 	go install .
