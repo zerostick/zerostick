@@ -11,13 +11,17 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/gorilla/handlers" // http logging handler
+	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 )
 
 const defaultConfigFile = "./config.yaml"
 
-var flagConfigFile string
-var tpl *template.Template
+var (
+	flagConfigFile string
+	tpl            *template.Template
+)
 
 func init() {
 	flag.StringVar(&flagConfigFile, "config", defaultConfigFile, "Sets the path to the configuration file.")
@@ -49,10 +53,17 @@ func main() {
 	}
 	viper.SetConfigFile(flagConfigFile)
 
-	http.HandleFunc("/", index)
-	http.Handle("/favicon.ico", http.NotFoundHandler())
+	r := mux.NewRouter() // Gorilla muxer
+
+	r.HandleFunc("/", index)
+	r.Handle("/favicon.ico", http.NotFoundHandler())
+	fs := http.FileServer(http.Dir("./zerostick_web/assets"))
+	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
+
 	log.Print("Listening with TLS on *:10443 (Also https://localhost:10443)")
-	http.ListenAndServeTLS(":10443", "zerostick_web/certs/cert.pem", "zerostick_web/certs/key.pem", nil)
+
+	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
+	http.ListenAndServeTLS(":10443", "zerostick_web/certs/cert.pem", "zerostick_web/certs/key.pem", loggedRouter)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {

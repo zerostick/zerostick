@@ -2,10 +2,12 @@ programname = zerostick
 
 .PHONY: clean build run
 
-default: build
+default: zerostick
 
 setup:
 	go get github.com/tools/godep
+	go get github.com/gorilla/handlers
+	go get github.com/gorilla/mux
 
 deps:
 	- rm -r vendor Godeps
@@ -15,8 +17,8 @@ deps_restore:
 	godep restore ./...
 	- rm -r vendor
 
-build: certs
-	go build -a -o ./build/$(programname) *.go
+zerostick: certs
+	go build -a -o $(programname) *.go
 
 certs:
 	if [ ! -d zerostick_web/certs ]; then /generate_certs.sh; fi
@@ -53,8 +55,8 @@ all: build_darwin build_linux build_arm5 build_arm7 build_win64 build_win32
 	rm ./build/$(programname).exe
 
 run: build
-	./build/$(programname)
+	./$(programname)
 
 clean:
 	- rm -rf build
-	- rm -rf zerostick_web/certs
+	- rm -f zerostick
