@@ -1,6 +1,8 @@
 // ZeroStick
 // Raspberry Pi Zero W web interface
 
+// +Build ignore
+//go:generate go run zerostick_web/assets_generate.go
 package main
 
 import (
