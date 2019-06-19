@@ -6,6 +6,7 @@ default: zerostick
 
 setup:
 	go get github.com/tools/godep
+	go get github.com/spf13/viper
 	go get github.com/gorilla/handlers
 	go get github.com/gorilla/mux
 
