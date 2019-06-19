@@ -29,7 +29,7 @@ Stuff needed:
 
 ### Setup
 
-- Download and install [Raspbian Stretch Lite](https://downloads.raspberrypi.org/raspbian_lite_latest) on the SD card using Rasbians instructions (That is using [Etcher](https://www.balena.io/etcher/))
+- Download and install [Raspbian Stretch Lite](https://downloads.raspberrypi.org/raspbian_lite_latest) on the SD card using Rasbians instructions (That is using [Etcher](https://www.balena.io/etcher/)). `./fetch_os_image.sh` will help you get the latest and unpacking it into the `cache` directory.
 - Configure WiFi (Instructions later)
 - Install the software from here (Instructions later)
 - Insert SD card into the Raspberry Pi
