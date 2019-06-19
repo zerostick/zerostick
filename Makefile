@@ -9,6 +9,7 @@ setup:
 	go get github.com/spf13/viper
 	go get github.com/gorilla/handlers
 	go get github.com/gorilla/mux
+	go get gopkg.in/fsnotify.v1
 
 deps:
 	- rm -r vendor Godeps
@@ -55,7 +56,7 @@ all: build_darwin build_linux build_arm5 build_arm7 build_win64 build_win32
 	rm ./build/$(programname)
 	rm ./build/$(programname).exe
 
-run: build
+run: zerostick
 	./$(programname)
 
 clean:

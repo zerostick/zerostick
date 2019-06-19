@@ -14,9 +14,15 @@ import (
 	"github.com/gorilla/handlers" // http logging handler
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
+	"gopkg.in/fsnotify.v1"
 )
 
-const defaultConfigFile = "./config.yaml"
+const (
+	defaultConfigFile = "./zerostick.yaml"
+	templatesRoot     = "./zerostick_web/templates"
+	assetsRoot        = "./zerostick_web/assets"
+	certsRoot         = "./zerostick_web/certs"
+)
 
 var (
 	flagConfigFile string
@@ -25,7 +31,7 @@ var (
 
 func init() {
 	flag.StringVar(&flagConfigFile, "config", defaultConfigFile, "Sets the path to the configuration file.")
-	tpl = template.Must(template.ParseGlob("zerostick_web/templates/*"))
+	loadTemplates()
 
 	go func() {
 		//Capture program shutdown, to make sure everything shuts down nicely
@@ -38,6 +44,11 @@ func init() {
 				os.Exit(0)
 			}
 		}
+	}()
+
+	go func() {
+		// Create a goroutine for handling webfiles watcher
+		webfilesWatcher()
 	}()
 }
 
@@ -57,13 +68,56 @@ func main() {
 
 	r.HandleFunc("/", index)
 	r.Handle("/favicon.ico", http.NotFoundHandler())
-	fs := http.FileServer(http.Dir("./zerostick_web/assets"))
+	fs := http.FileServer(http.Dir(assetsRoot))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
 
 	log.Print("Listening with TLS on *:10443 (Also https://localhost:10443)")
 
 	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
-	http.ListenAndServeTLS(":10443", "zerostick_web/certs/cert.pem", "zerostick_web/certs/key.pem", loggedRouter)
+	http.ListenAndServeTLS(":10443", certsRoot+"/cert.pem", certsRoot+"/key.pem", loggedRouter)
+}
+
+// Load html templates
+func loadTemplates() {
+	// log. Println("Reloading templates")
+	tpl = template.Must(template.ParseGlob(templatesRoot + "/*"))
+}
+
+// Monitor templates dir for changes and reload if any
+func webfilesWatcher() {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer watcher.Close()
+
+	done := make(chan bool)
+	go func() {
+		for {
+			select {
+			case event, ok := <-watcher.Events:
+				if !ok {
+					return
+				}
+				// log.Println("FS event:", event)
+				if event.Op&fsnotify.Write == fsnotify.Write {
+					log.Println("FS modified file:", event.Name)
+					loadTemplates()
+				}
+			case err, ok := <-watcher.Errors:
+				if !ok {
+					return
+				}
+				log.Println("error:", err)
+			}
+		}
+	}()
+
+	err = watcher.Add(templatesRoot)
+	if err != nil {
+		log.Fatal(err)
+	}
+	<-done
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
