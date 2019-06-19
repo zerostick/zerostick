@@ -34,3 +34,24 @@ Stuff needed:
 - Install the software from here (Instructions later)
 - Insert SD card into the Raspberry Pi
 - Attach Pi to your car.
+
+
+## Developing/building the zerostick
+
+### Setup, once:
+
+```
+make setup
+```
+
+### Build for your own maschine
+
+```
+make
+```
+
+### To run it
+
+```
+make run
+```
