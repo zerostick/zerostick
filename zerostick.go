@@ -68,6 +68,7 @@ func main() {
 
 	r := mux.NewRouter() // Gorilla muxer
 
+	r.HandleFunc("/", index)
 	r.HandleFunc("/index", index)
 	r.HandleFunc("/config", config)
 	r.Handle("/favicon.ico", http.NotFoundHandler())
@@ -77,7 +78,7 @@ func main() {
 	log.Print("Listening with TLS on *:10443 (Also https://localhost:10443)")
 
 	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
-	http.ListenAndServeTLS(":10443", certsRoot+"/cert.pem", certsRoot+"/key.pem", loggedRouter)
+	http.ListenAndServeTLS(":443", certsRoot+"/cert.pem", certsRoot+"/key.pem", loggedRouter)
 }
 
 // Load html templates
