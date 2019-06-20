@@ -1,0 +1,14 @@
+[Unit]
+Description=ZeroStick
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/zerostick
+WorkingDirectory=/boot
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
