@@ -54,10 +54,7 @@ device:
 	GOOS=linux GOARM=5 GOARCH=arm go build -tags=deploy_build -a -o ./build/$(programname) *.go
 	scp build/zerostick pi@zerostick.local:
 	scp -r zerostick_web pi@zerostick.local:
-	ssh pi@zerostick.local sudo mv zerostick /opt/zerostick/ \
-		sudo rm -rf /opt/zerostick_web \
-		sudo mv zerostick_web /opt/zerostick/ \
-		sudo systemctl restart zerostick.service
+	ssh pi@zerostick.local "sudo mv zerostick /opt/zerostick/ && sudo rm -rf /opt/zerostick_web && sudo mv zerostick_web /opt/zerostick/ && sudo systemctl restart zerostick.service"
 
 clean:
 	- rm -rf build
