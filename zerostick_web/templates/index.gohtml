@@ -1,15 +1,42 @@
 {{template "header"}}
+<body>
+<div class="content">
 
-<form method="POST" enctype="multipart/form-data">
+ <a href="https://www.tesla.com/model3"><input type="image" src="assets/img/tesla_model3_black.png" alt="Tesla Model 3" class="responsive"/></a>
+
+  <input type="button" class="button" value="Sync Cam">
+  <input type="button" class="button" value="Sync Music">
+  <a href="config"><input type="button" class="button" value="Configure"></a>
+
+<!-- <form method="POST" enctype="multipart/form-data">
     <label for="idx-f">Some action</label>
     <input type="text" id="idx-f" name="test">
     <br>
     <input type="submit">
-</form>
+</form> -->
+
+<p>
+</br>
+ <h3>Purpose</h3>
+ <ul>
+  <li>Use a Raspberry Pi Zero W (USB powered device) to act as USB storage for a Tesla.</li>
+  </br>
+  <li>Use the Pi to serve a web interface accessible from the in car browser.</li>
+  </br>
+  <li>Let the user setup sync of video clips stored by the car to external services (OneDrive, home local NAS/PC device)</li>
+  </br>
+  <li>Reverse syncing of music to the Pi, for in car usage.</li>
+  </br>
+  <li>Let the setup process be a painless as possible - There are users without Linux experience out there.</li>
+  </br>
+  <li>Provide streamable access to the video clips via WiFi on the move; Create WiFi in Ad-Hoc AP mode, web interface to display/delete/archive videos.</li>
+ </p>
+</div> 
+
 
 {{if .}}
 <h1>Here are the contents of the file:</h1>
 {{.}}
 {{end}}
-
+</body>
 {{template "footer"}}

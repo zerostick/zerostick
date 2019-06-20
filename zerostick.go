@@ -68,7 +68,8 @@ func main() {
 
 	r := mux.NewRouter() // Gorilla muxer
 
-	r.HandleFunc("/", index)
+	r.HandleFunc("/index", index)
+	r.HandleFunc("/config", config)
 	r.Handle("/favicon.ico", http.NotFoundHandler())
 	fs := http.FileServer(http.Dir(assetsRoot))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
@@ -124,4 +125,7 @@ func webfilesWatcher() {
 
 func index(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "index.gohtml", nil)
+}
+func config(w http.ResponseWriter, r *http.Request) {
+	tpl.ExecuteTemplate(w, "config.gohtml", nil)
 }
