@@ -4,22 +4,6 @@ programname = zerostick
 
 default: zerostick
 
-setup:
-	go get github.com/tools/godep
-	go get github.com/spf13/viper
-	go get github.com/gorilla/handlers
-	go get github.com/gorilla/mux
-	go get gopkg.in/fsnotify.v1
-	go get github.com/shurcooL/vfsgen
-
-deps:
-	- rm -r vendor Godeps
-	godep save ./...
-
-deps_restore:
-	godep restore ./...
-	- rm -r vendor
-
 zerostick: certs
 	go build -a -o $(programname) *.go
 
@@ -41,6 +25,7 @@ build_linux:
 	GOOS=linux GOARCH=amd64 go build -tags=deploy_build -a -o ./build/$(programname) *.go
 	zip ./build/$(programname)_linux64.zip ./build/$(programname)
 
+# The Raspberry Pi Zero
 build_arm5:
 	GOOS=linux GOARM=5 GOARCH=arm go build -tags=deploy_build -a -o ./build/$(programname) *.go
 	zip ./build/$(programname)_linux_arm5.zip ./build/$(programname)
