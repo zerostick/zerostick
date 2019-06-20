@@ -14,7 +14,7 @@ install:
 	go install .
 
 generate:
-	mkdir build
+	mkdir -p build
 	go generate
 
 build_darwin: generate
