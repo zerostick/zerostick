@@ -3,8 +3,8 @@ Description=ZeroStick
 After=network.target
 
 [Service]
-ExecStart=/usr/local/bin/zerostick
-WorkingDirectory=/boot
+ExecStart=/opt/zerostick/zerostick
+WorkingDirectory=/opt/zerostick
 StandardOutput=inherit
 StandardError=inherit
 Restart=always

@@ -17,7 +17,7 @@ generate:
 	mkdir -p build
 	go generate
 
-build_darwin: generate
+build_darwin: generate certs
 	GOOS=darwin GOARCH=amd64 go build -tags=deploy_build -a -o ./build/$(programname) *.go
 	zip ./build/$(programname)_darwin64.zip ./build/$(programname)
 
@@ -48,6 +48,13 @@ all: build_darwin build_linux build_arm5 build_arm7 build_win64 build_win32
 
 run: zerostick
 	./$(programname)
+
+# Development target; Build, push to zerostick.local and restart service
+device: certs
+	GOOS=linux GOARM=5 GOARCH=arm go build -tags=deploy_build -a -o ./build/$(programname) *.go
+	scp build/zerostick pi@zerostick.local:
+	scp -r zerostick_web pi@zerostick.local:
+	ssh pi@zerostick.local "sudo mv zerostick /opt/zerostick/ && sudo rm -rf /opt/zerostick/zerostick_web && sudo mv zerostick_web /opt/zerostick/ && sudo systemctl restart zerostick.service"
 
 clean:
 	- rm -rf build
