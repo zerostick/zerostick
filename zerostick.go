@@ -3,6 +3,7 @@
 
 // +Build ignore
 //go:generate go run zerostick_web/assets_generate.go
+//go:generate go run zerostick_web/templates_generate.go
 package main
 
 import (
@@ -72,7 +73,10 @@ func main() {
 	r.HandleFunc("/index", index)
 	r.HandleFunc("/config", config)
 	r.Handle("/favicon.ico", http.NotFoundHandler())
+
 	fs := http.FileServer(http.Dir(assetsRoot))
+	//fs := http.FileServer(Assets)
+	//var fs http.FileSystem = http.Dir("Assets")
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
 
 	log.Print("Listening with TLS on *:10443 (Also https://localhost:10443)")

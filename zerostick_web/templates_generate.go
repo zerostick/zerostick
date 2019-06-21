@@ -13,12 +13,12 @@ import (
 
 func main() {
 	var cwd, _ = os.Getwd()
-	assets := http.Dir(filepath.Join(cwd, "zerostick_web/assets"))
-	if err := vfsgen.Generate(assets, vfsgen.Options{
-		Filename:     "build/assets_vfsdata.go",
-		PackageName:  "assets",
+	templates := http.Dir(filepath.Join(cwd, "zerostick_web/templates"))
+	if err := vfsgen.Generate(templates, vfsgen.Options{
+		Filename:     "build/templates_vfsdata.go",
+		PackageName:  "templates",
 		BuildTags:    "deploy_build",
-		VariableName: "Assets",
+		VariableName: "Templates",
 	}); err != nil {
 		log.Fatalln(err)
 	}
