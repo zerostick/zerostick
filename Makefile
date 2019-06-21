@@ -19,16 +19,16 @@ generate:
 
 build_darwin: generate certs
 	GOOS=darwin GOARCH=amd64 go build -tags=deploy_build -a -o ./build/$(programname) *.go
-	zip ./build/$(programname)_darwin64.zip ./build/$(programname)
+	#zip ./build/$(programname)_darwin64.zip ./build/$(programname)
 
 build_linux:
 	GOOS=linux GOARCH=amd64 go build -tags=deploy_build -a -o ./build/$(programname) *.go
 	zip ./build/$(programname)_linux64.zip ./build/$(programname)
 
 # The Raspberry Pi Zero
-build_arm5:
-	GOOS=linux GOARM=5 GOARCH=arm go build -tags=deploy_build -a -o ./build/$(programname) *.go
-	zip ./build/$(programname)_linux_arm5.zip ./build/$(programname)
+build_arm6:
+	GOOS=linux GOARM=6 GOARCH=arm go build -tags=deploy_build -a -o ./build/$(programname) *.go
+	zip ./build/$(programname)_linux_arm6.zip ./build/$(programname)
 
 build_arm7:
 	GOOS=linux GOARM=7 GOARCH=arm go build -tags=deploy_build -a -o ./build/$(programname) *.go
@@ -51,7 +51,7 @@ run: zerostick
 
 # Development target; Build, push to zerostick.local and restart service
 device: certs
-	GOOS=linux GOARM=5 GOARCH=arm go build -tags=deploy_build -a -o ./build/$(programname) *.go
+	GOOS=linux GOARM=6 GOARCH=arm go build -tags=deploy_build -a -o ./build/$(programname) *.go
 	scp build/zerostick pi@zerostick.local:
 	scp -r zerostick_web pi@zerostick.local:
 	ssh pi@zerostick.local "sudo mv zerostick /opt/zerostick/ && sudo rm -rf /opt/zerostick/zerostick_web && sudo mv zerostick_web /opt/zerostick/ && sudo systemctl restart zerostick.service"
