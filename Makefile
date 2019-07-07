@@ -17,6 +17,15 @@ generate:
 	mkdir -p build
 	go generate
 
+image: build_arm6
+	scripts/build_image.sh
+
+rclone:
+	scripts/build_rclone.sh
+
+dms:
+	scripts/build_dms.sh
+
 build_darwin: generate certs
 	GOOS=darwin GOARCH=amd64 go build -tags=deploy_build -a -o ./build/$(programname) *.go
 	#zip ./build/$(programname)_darwin64.zip ./build/$(programname)
