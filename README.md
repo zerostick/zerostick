@@ -55,3 +55,9 @@ make
 ```
 make run
 ```
+
+### Create image for the Pi
+
+```
+make image
+```

@@ -17,7 +17,7 @@ generate:
 	mkdir -p build
 	go generate
 
-image: build_arm6
+image: build_arm6 rclone dms
 	scripts/build_image.sh
 
 rclone:
