@@ -8,11 +8,15 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"time"
+	"os/exec"
+	"bytes"
 
 	"github.com/gorilla/handlers" // http logging handler
 	"github.com/gorilla/mux"
@@ -21,19 +25,38 @@ import (
 )
 
 const (
-	defaultConfigFile = "./zerostick.yaml"
+	defaultConfigFile = "zerostick"
 	templatesRoot     = "./zerostick_web/templates"
 	assetsRoot        = "./zerostick_web/assets"
 	certsRoot         = "./zerostick_web/certs"
 )
 
+type config struct {
+	Port     int
+	Hostname string
+	// PathMap string `mapstructure:"path_map"`
+}
+
+type wifi struct {
+	ssid	string
+	password string
+	priority int
+	syncEnabled bool
+}
+
 var (
 	flagConfigFile string
+	flagHostname   string
+	flagPort       int
 	tpl            *template.Template
+	cfg            config // Config struct
 )
 
 func init() {
-	flag.StringVar(&flagConfigFile, "config", defaultConfigFile, "Sets the path to the configuration file.")
+	flag.StringVar(&flagConfigFile, "configfile", defaultConfigFile, "Sets the path to the configuration file.")
+	flag.StringVar(&flagHostname, "hostname", "0.0.0.0", "Hostname to listen on.")
+	flag.IntVar(&cfg.Port, "port", 443, "Port number that this program will listen on.")
+
 	loadTemplates()
 
 	go func() {
@@ -51,27 +74,47 @@ func init() {
 
 	go func() {
 		// Create a goroutine for handling webfiles watcher
+		log.Println("Running webfiles watcher...") // TODO: Disable for no dev
 		webfilesWatcher()
 	}()
 }
 
 func main() {
 	flag.Parse()
-	viper.AutomaticEnv()
-	viper.SetEnvPrefix("ZEROSTICK") // Preparing for ability to take env variables as input
 
+	// Read config
+	viper.AutomaticEnv()
+	viper.SetEnvPrefix("ZEROSTICK") // Ie ZEROSTICK_PORT=8080 ./zerostick
 	log.Println("ZeroStick is starting up")
 	log.Printf("Loading configuration from %s\n", flagConfigFile)
 	if flagConfigFile == defaultConfigFile {
 		log.Println("You can set the location of the config file with the -config flag")
 	}
-	viper.SetConfigFile(flagConfigFile)
+	viper.SetDefault("port", "443")
+	viper.SetDefault("hostname", "0.0.0.0")
+	viper.AddConfigPath("/etc/zerostick/") // path to look for the config file in
+	viper.AddConfigPath("$HOME/.config/")  // call multiple times to add many search paths
+	viper.AddConfigPath(".")    // optionally look for config in the working directory
+	viper.SetConfigName(flagConfigFile)
+	err := viper.ReadInConfig() // Find and read the config file
+	if err != nil {             // Handle errors reading the config file
+		// Ignore errors, we can run without a config file
+		log.Println(fmt.Errorf("No config file found: %s", err))
+		log.Println("Creating a config file with defaults")
+		viper.WriteConfigAs(fmt.Sprintf("./%s.yaml", defaultConfigFile))
+	}
+	viper.Debug()
+
+	cfg.Port = viper.GetInt("port")
+	cfg.Hostname = viper.GetString("hostname")
+
+	viper.WriteConfig() // Write the config to file
 
 	r := mux.NewRouter() // Gorilla muxer
 
-	r.HandleFunc("/", index)
-	r.HandleFunc("/index", index)
-	r.HandleFunc("/config", config)
+	r.HandleFunc("/", indexPage)
+	r.HandleFunc("/index", indexPage)
+	r.HandleFunc("/config", configPage)
 	r.Handle("/favicon.ico", http.NotFoundHandler())
 
 	fs := http.FileServer(http.Dir(assetsRoot))
@@ -79,15 +122,28 @@ func main() {
 	//var fs http.FileSystem = http.Dir("Assets")
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
 
-	log.Print("Listening with TLS on *:10443 (Also https://localhost:10443)")
+	log.Print(fmt.Sprintf("Listening with TLS on %s:%d (Maybe even https://localhost:%d)", cfg.Hostname, cfg.Port, cfg.Port))
 
 	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
-	http.ListenAndServeTLS(":443", certsRoot+"/cert.pem", certsRoot+"/key.pem", loggedRouter)
+
+	srv := &http.Server{
+		Handler: loggedRouter,
+		Addr:    fmt.Sprintf("%s:%d", cfg.Hostname, cfg.Port),
+		// Good practice: enforce timeouts for servers you create!
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+	// cert, err := tls.LoadX509KeyPair(certsRoot+"/cert.pem", certsRoot+"/key.pem")
+	// if err != nil {
+	// 	log.Fatalf("server: loadkeys: %s", err)
+	// }
+	// srv.TLSConfig = &tls.Config{Certificates: []tls.Certificate{cert}, InsecureSkipVerify: true}
+	log.Fatal(srv.ListenAndServeTLS(certsRoot+"/cert.pem", certsRoot+"/key.pem"))
+	//http.ListenAndServeTLS(fmt.Sprintf("%s:%d", cfg.Hostname, cfg.Port), certsRoot+"/cert.pem", certsRoot+"/key.pem", loggedRouter)
 }
 
 // Load html templates
 func loadTemplates() {
-	// log. Println("Reloading templates")
 	tpl = template.Must(template.ParseGlob(templatesRoot + "/*"))
 }
 
@@ -128,9 +184,29 @@ func webfilesWatcher() {
 	<-done
 }
 
-func index(w http.ResponseWriter, r *http.Request) {
+func indexPage(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "index.gohtml", nil)
 }
-func config(w http.ResponseWriter, r *http.Request) {
+
+func configPage(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "config.gohtml", nil)
+}
+
+// This is a function to execute a system command and return output
+func getCommandOutput(command string, arguments ...string) string {
+	// args... unpacks arguments array into elements
+	cmd := exec.Command(command, arguments...)
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+	err := cmd.Start()
+	if err != nil {
+		log.Fatal(fmt.Sprint(err) + ": " + stderr.String())
+	}
+	err = cmd.Wait()
+	if err != nil {
+		log.Fatal(fmt.Sprint(err) + ": " + stderr.String())
+	}
+	return out.String()
 }
