@@ -1,0 +1,9 @@
+--- stage_zerostick/rootfs/boot/config.txt
++++ stage_zerostick/rootfs/boot/config.txt
+@@ -62,3 +62,6 @@
+
+ [all]
+ #dtoverlay=vc4-fkms-v3d
++dtparam=i2c_arm=on
++dtoverlay=dwc2
++gpu_mem=16

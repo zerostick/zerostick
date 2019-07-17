@@ -1,0 +1,6 @@
+lvm2
+python3-scrollphathd
+parted
+kpartx
+fatresize
+vim
