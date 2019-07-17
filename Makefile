@@ -14,7 +14,7 @@ install:
 	go install .
 
 generate:
-	mkdir -p build
+	mkdir -p build/bin
 	go generate
 
 image: build_arm6 rclone dms
@@ -27,44 +27,47 @@ dms:
 	scripts/build_dms.sh
 
 build_darwin: generate certs
-	GOOS=darwin GOARCH=amd64 go build -tags=deploy_build -a -o ./build/$(programname) *.go
+	GOOS=darwin GOARCH=amd64 go build -tags=deploy_build -a -o ./build/bin/$(programname) *.go
 	#zip ./build/$(programname)_darwin64.zip ./build/$(programname)
 
-build_linux:
-	GOOS=linux GOARCH=amd64 go build -tags=deploy_build -a -o ./build/$(programname) *.go
-	zip ./build/$(programname)_linux64.zip ./build/$(programname)
+build_linux: generate certs
+	GOOS=linux GOARCH=amd64 go build -tags=deploy_build -a -o ./build/bin/$(programname) *.go
+	#zip ./build/$(programname)_linux64.zip ./build/$(programname)
 
 # The Raspberry Pi Zero
-build_arm6:
-	GOOS=linux GOARM=6 GOARCH=arm go build -tags=deploy_build -a -o ./build/$(programname) *.go
-	zip ./build/$(programname)_linux_arm6.zip ./build/$(programname)
+build_arm6: generate certs
+	GOOS=linux GOARM=6 GOARCH=arm go build -tags=deploy_build -a -o ./build/bin/$(programname) *.go
+	#zip ./build/$(programname)_linux_arm6.zip ./build/$(programname)
 
-build_arm7:
-	GOOS=linux GOARM=7 GOARCH=arm go build -tags=deploy_build -a -o ./build/$(programname) *.go
-	zip ./build/$(programname)_linux_arm7.zip ./build/$(programname)
+build_arm7: generate certs
+	GOOS=linux GOARM=7 GOARCH=arm go build -tags=deploy_build -a -o ./build/bin/$(programname) *.go
+	#zip ./build/$(programname)_linux_arm7.zip ./build/$(programname)
 
-build_win64:
-	GOOS=windows GOARCH=amd64 go build -tags=deploy_build -a -o ./build/$(programname).exe *.go
-	zip ./build/$(programname)_win64.zip ./build/$(programname).exe
+build_win64: generate certs
+	GOOS=windows GOARCH=amd64 go build -tags=deploy_build -a -o ./build/bin/$(programname).exe *.go
+	#zip ./build/$(programname)_win64.zip ./build/$(programname).exe
 
-build_win32:
-	GOOS=windows GOARCH=386 go build -tags=deploy_build -a -o ./build/$(programname).exe *.go
-	zip ./build/$(programname)_win32.zip ./build/$(programname).exe
+build_win32: generate certs
+	GOOS=windows GOARCH=386 go build -tags=deploy_build -a -o ./build/bin/$(programname).exe *.go
+	#zip ./build/$(programname)_win32.zip ./build/$(programname).exe
 
-all: build_darwin build_linux build_arm5 build_arm7 build_win64 build_win32
-	rm ./build/$(programname)
-	rm ./build/$(programname).exe
+# all: build_darwin build_linux build_arm6 build_arm7 build_win64 build_win32
+# 	rm ./build/$(programname)
+# 	rm ./build/$(programname).exe
 
 run: zerostick
 	./$(programname)
 
 # Development target; Build, push to zerostick.local and restart service
 device: certs
-	GOOS=linux GOARM=6 GOARCH=arm go build -tags=deploy_build -a -o ./build/$(programname) *.go
-	scp build/zerostick pi@zerostick.local:
+	GOOS=linux GOARM=6 GOARCH=arm go build -tags=deploy_build -a -o ./build/bin/$(programname) *.go
+	scp build/bin/zerostick pi@zerostick.local:
 	scp -r zerostick_web pi@zerostick.local:
 	ssh pi@zerostick.local "sudo mv zerostick /opt/zerostick/ && sudo rm -rf /opt/zerostick/zerostick_web && sudo mv zerostick_web /opt/zerostick/ && sudo systemctl restart zerostick.service"
 
 clean:
 	- rm -rf build
 	- rm -f zerostick
+
+real_clean: clean
+	- rm -rf cache
