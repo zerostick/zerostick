@@ -3,8 +3,7 @@
 DISK_DEV=/dev/mmcblk0
 
 # Does zeroVG exist?
-vgs | grep -q zeroVG
-if [ ! $? == 0 ]
+if [ ! -d /dev/zeroVG ]
 then # Create partitioning
 
     # suck in disk layout
