@@ -1,0 +1,1 @@
+ACTION=="add", SUBSYSTEM=="ieee80211", KERNEL=="phy0", RUN+="/usr/sbin/iw phy %k interface add wlan0 type station", RUN+="/usr/sbin/iw phy %k interface add uap0 type __ap"
