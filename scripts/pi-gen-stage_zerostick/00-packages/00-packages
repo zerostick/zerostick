@@ -4,4 +4,5 @@ parted
 kpartx
 fatresize
 ntp
+busybox-syslogd
 vim
