@@ -3,7 +3,7 @@
 DISK_DEV=/dev/mmcblk0
 
 # Does zeroVG exist?
-if [ ! -d /dev/zeroVG ]
+if [ ! -h /dev/zeroVG/cam ] || [ ! -h /dev/zeroVG/music ]
 then # Create partitioning
 
     # suck in disk layout
