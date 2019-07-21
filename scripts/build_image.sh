@@ -32,8 +32,12 @@ docker-compose up -d
 cp -r ${BASEPATH}/scripts/pi-gen-stage_zerostick stage_zerostick
 cp -r ${BASEPATH}/build/bin stage_zerostick/03-binaries/
 cp stage2/prerun.sh stage_zerostick/prerun.sh
+rm -f stage2/EXPORT_IMAGE stage2/EXPORT_NOOBS
 cp stage4/EXPORT_IMAGE stage_zerostick/EXPORT_IMAGE
 cp ${BASEPATH}/scripts/pi-gen-config config
+
+# Skip this when the vfs stuff works in zerostick UI
+cp -r ${BASEPATH}/zerostick_web stage_zerostick/03-binaries/
 
 time ./build-docker.sh
 
