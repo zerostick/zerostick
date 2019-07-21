@@ -57,4 +57,4 @@ make run
 make image
 ```
 
-It will end up in `build` as a `.img` file that can be put directly to the the SD card.
+It will end up in `build/pi-gen/deploy` as a `.img` file that can be put directly to the the SD card.
