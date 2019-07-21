@@ -32,7 +32,7 @@ docker-compose up -d
 cp -r ${BASEPATH}/scripts/pi-gen-stage_zerostick stage_zerostick
 cp -r ${BASEPATH}/build/bin stage_zerostick/03-binaries/
 cp stage2/prerun.sh stage_zerostick/prerun.sh
-touch stage_zerostick/EXPORT_IMAGE
+cp stage4/EXPORT_IMAGE stage_zerostick/EXPORT_IMAGE
 cp ${BASEPATH}/scripts/pi-gen-config config
 
 time ./build-docker.sh
