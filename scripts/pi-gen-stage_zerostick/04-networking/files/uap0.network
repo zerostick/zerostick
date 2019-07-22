@@ -1,0 +1,6 @@
+# Testing using systemd for networking
+[Match]
+Name=uap0
+[Network]
+# static IP
+Address=192.168.27.1/24
