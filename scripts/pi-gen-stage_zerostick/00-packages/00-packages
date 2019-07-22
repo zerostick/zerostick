@@ -5,3 +5,5 @@ fatresize
 ntp
 busybox-syslogd
 vim
+ffmpeg
+ffmpegthumbnailer
