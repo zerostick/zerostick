@@ -7,16 +7,16 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
 	"time"
-	"os/exec"
-	"bytes"
 
 	"github.com/gorilla/handlers" // http logging handler
 	"github.com/gorilla/mux"
@@ -38,9 +38,9 @@ type config struct {
 }
 
 type wifi struct {
-	ssid	string
-	password string
-	priority int
+	ssid        string
+	password    string
+	priority    int
 	syncEnabled bool
 }
 
@@ -94,7 +94,7 @@ func main() {
 	viper.SetDefault("hostname", "0.0.0.0")
 	viper.AddConfigPath("/etc/zerostick/") // path to look for the config file in
 	viper.AddConfigPath("$HOME/.config/")  // call multiple times to add many search paths
-	viper.AddConfigPath(".")    // optionally look for config in the working directory
+	viper.AddConfigPath(".")               // optionally look for config in the working directory
 	viper.SetConfigName(flagConfigFile)
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
@@ -115,6 +115,9 @@ func main() {
 	r.HandleFunc("/", indexPage)
 	r.HandleFunc("/index", indexPage)
 	r.HandleFunc("/config", configPage)
+
+	r.HandleFunc("/post/wifiConfiguration", wifiConfiguration)
+	r.HandleFunc("/post/hotspotConfiguration", hotspotConfiguration)
 	r.Handle("/favicon.ico", http.NotFoundHandler())
 
 	fs := http.FileServer(http.Dir(assetsRoot))
@@ -189,6 +192,24 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func configPage(w http.ResponseWriter, r *http.Request) {
+	tpl.ExecuteTemplate(w, "config.gohtml", nil)
+}
+
+func wifiConfiguration(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	// ssid := r.FormValue("ssid")
+	// password := r.FormValue("password")
+
+	http.Redirect(w, r, "/config", http.StatusFound)
+	tpl.ExecuteTemplate(w, "config.gohtml", nil)
+}
+
+func hotspotConfiguration(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	// ssid := r.FormValue("ssid")
+	// password := r.FormValue("password")
+
+	http.Redirect(w, r, "/config", http.StatusFound)
 	tpl.ExecuteTemplate(w, "config.gohtml", nil)
 }
 
