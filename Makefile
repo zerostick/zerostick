@@ -71,6 +71,8 @@ device: certs
 clean:
 	- rm -rf build
 	- rm -f zerostick
+	- docker rm -v pigen_work || true
 
 real_clean: clean
 	- rm -rf cache
+
