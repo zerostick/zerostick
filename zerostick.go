@@ -123,7 +123,7 @@ func main() {
 	r.HandleFunc("/index", indexPage)
 	r.HandleFunc("/config", configPage)
 
-	r.HandleFunc("/post/config", onPostEvent)
+	r.HandleFunc("/post/config", onPostConfigEvent)
 	r.Handle("/favicon.ico", http.NotFoundHandler())
 
 	fs := http.FileServer(http.Dir(assetsRoot))
@@ -205,7 +205,7 @@ func configPage(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "config.gohtml", conf)
 }
 
-func onPostEvent(w http.ResponseWriter, r *http.Request) {
+func onPostConfigEvent(w http.ResponseWriter, r *http.Request) {
 	ssid := r.FormValue("ssid")
 	password := r.FormValue("password")
 	formType := r.FormValue("type")
