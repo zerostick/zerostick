@@ -44,6 +44,12 @@ type wifi struct {
 	syncEnabled bool
 }
 
+// ConfigPageData is exported to use in Config.gohtml
+type ConfigPageData struct {
+	WifiSsid    string
+	HotspotSsid string
+}
+
 var (
 	flagConfigFile string
 	flagHostname   string
@@ -66,6 +72,7 @@ func init() {
 		for sig := range c {
 			if sig == os.Interrupt {
 				log.Print("ZeroStick is shutting down")
+				viper.WriteConfig()
 				// TODO: Capture and clean
 				os.Exit(0)
 			}
@@ -116,8 +123,7 @@ func main() {
 	r.HandleFunc("/index", indexPage)
 	r.HandleFunc("/config", configPage)
 
-	r.HandleFunc("/post/wifiConfiguration", wifiConfiguration)
-	r.HandleFunc("/post/hotspotConfiguration", hotspotConfiguration)
+	r.HandleFunc("/post/config", onPostEvent)
 	r.Handle("/favicon.ico", http.NotFoundHandler())
 
 	fs := http.FileServer(http.Dir(assetsRoot))
@@ -192,25 +198,29 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func configPage(w http.ResponseWriter, r *http.Request) {
-	tpl.ExecuteTemplate(w, "config.gohtml", nil)
+	var conf ConfigPageData
+	conf.WifiSsid = viper.GetString("wifiSsid")
+	conf.HotspotSsid = viper.GetString("hotspotSsid")
+
+	tpl.ExecuteTemplate(w, "config.gohtml", conf)
 }
 
-func wifiConfiguration(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	// ssid := r.FormValue("ssid")
-	// password := r.FormValue("password")
+func onPostEvent(w http.ResponseWriter, r *http.Request) {
+	ssid := r.FormValue("ssid")
+	password := r.FormValue("password")
+	formType := r.FormValue("type")
 
-	http.Redirect(w, r, "/config", http.StatusFound)
-	tpl.ExecuteTemplate(w, "config.gohtml", nil)
-}
-
-func hotspotConfiguration(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	// ssid := r.FormValue("ssid")
-	// password := r.FormValue("password")
-
-	http.Redirect(w, r, "/config", http.StatusFound)
-	tpl.ExecuteTemplate(w, "config.gohtml", nil)
+	if formType == "wifi" {
+		viper.Set("wifiSsid", ssid)
+		viper.Set("wifiPassword", password)
+	} else if formType == "hotspot" {
+		viper.Set("hotspotSsid", ssid)
+		viper.Set("hotspotPassword", password)
+	} else {
+		http.Error(w, "Unknown type", http.StatusBadRequest)
+	}
+	viper.WriteConfig()
+	// todo: OS level work
 }
 
 // This is a function to execute a system command and return output
