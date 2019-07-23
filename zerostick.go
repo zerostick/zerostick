@@ -7,16 +7,16 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
 	"time"
-	"os/exec"
-	"bytes"
 
 	"github.com/gorilla/handlers" // http logging handler
 	"github.com/gorilla/mux"
@@ -38,10 +38,16 @@ type config struct {
 }
 
 type wifi struct {
-	ssid	string
-	password string
-	priority int
+	ssid        string
+	password    string
+	priority    int
 	syncEnabled bool
+}
+
+// ConfigPageData is exported to use in Config.gohtml
+type ConfigPageData struct {
+	WifiSsid    string
+	HotspotSsid string
 }
 
 var (
@@ -66,6 +72,7 @@ func init() {
 		for sig := range c {
 			if sig == os.Interrupt {
 				log.Print("ZeroStick is shutting down")
+				viper.WriteConfig()
 				// TODO: Capture and clean
 				os.Exit(0)
 			}
@@ -94,7 +101,7 @@ func main() {
 	viper.SetDefault("hostname", "0.0.0.0")
 	viper.AddConfigPath("/etc/zerostick/") // path to look for the config file in
 	viper.AddConfigPath("$HOME/.config/")  // call multiple times to add many search paths
-	viper.AddConfigPath(".")    // optionally look for config in the working directory
+	viper.AddConfigPath(".")               // optionally look for config in the working directory
 	viper.SetConfigName(flagConfigFile)
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
@@ -115,6 +122,8 @@ func main() {
 	r.HandleFunc("/", indexPage)
 	r.HandleFunc("/index", indexPage)
 	r.HandleFunc("/config", configPage)
+
+	r.HandleFunc("/post/config", onPostConfigEvent)
 	r.Handle("/favicon.ico", http.NotFoundHandler())
 
 	fs := http.FileServer(http.Dir(assetsRoot))
@@ -189,7 +198,29 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func configPage(w http.ResponseWriter, r *http.Request) {
-	tpl.ExecuteTemplate(w, "config.gohtml", nil)
+	var conf ConfigPageData
+	conf.WifiSsid = viper.GetString("wifiSsid")
+	conf.HotspotSsid = viper.GetString("hotspotSsid")
+
+	tpl.ExecuteTemplate(w, "config.gohtml", conf)
+}
+
+func onPostConfigEvent(w http.ResponseWriter, r *http.Request) {
+	ssid := r.FormValue("ssid")
+	password := r.FormValue("password")
+	formType := r.FormValue("type")
+
+	if formType == "wifi" {
+		viper.Set("wifiSsid", ssid)
+		viper.Set("wifiPassword", password)
+	} else if formType == "hotspot" {
+		viper.Set("hotspotSsid", ssid)
+		viper.Set("hotspotPassword", password)
+	} else {
+		http.Error(w, "Unknown type", http.StatusBadRequest)
+	}
+	viper.WriteConfig()
+	// todo: OS level work
 }
 
 // This is a function to execute a system command and return output

@@ -39,7 +39,7 @@ Stuff needed:
 
 ## Developing/building the zerostick
 
-### Build the ZeroStick controller for your own maschine
+### Build the ZeroStick controller for your own machine
 
 ```
 make

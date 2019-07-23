@@ -6,3 +6,4 @@ build
 zerostick_web/certs
 zerostick
 tmp
+__debug_bin

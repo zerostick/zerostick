@@ -4,49 +4,127 @@
 <div class="content">
 
 <div>
-<a href="https://www.tesla.com/model3"><input type="image" src="assets/img/tesla_model3_black.png" alt="Tesla Model 3" class="responsive"/></a>
+<a href="/index"><input type="image" src="/assets/img/tesla_model3_black.png" alt="Tesla Model 3" class="responsive"/></a>
 </div>
 
 </br>
 </br>
 
-<div class="thing">
- <input type="button" class="button" value="Use Wi-Fi">
-  <input type="button" class="button" value="Use Hotspot">
-<a href="index"><input type="button" class="button" value="Go Back"></a>
+<div class="navigation">
+  <button class="button" onclick="wifiConfigurationToggle()">Wi-Fi Configuration</button>
+  <button class="button" onclick="hotspotConfigurationToggle()">Hotspot Configuration</button>
+  <a href="/index"><input type="button" class="button" value="Go Back"></a>
 </div>
 
-<p id="Use Wi-Fi"></p>
+<div id="updatedMessage" style="display: none;">
+  <h2>Updated configuration - Please wait a few minutes to take effect</h2>
+</div>
+
+<div id="errorMessage" style="display: none;">
+  <h2>ERROR!</h2>
+</div>
+
+<div id="wifiConfiguration" style="display: none;">
+  <h2>Wi-Fi Configuration </h2>
+  <p>Configure your Wi-Fi connection. This connection will be treated as unlimited - we will upload TeslaCam videos through this connection. </p>
+
+  <form class="configForm">
+      <div class="form-group">
+          <label>SSID</label>
+          <input type="text" class="form-control" name="ssid" value="{{.WifiSsid}}"/>
+      </div>
+      <div class="form-group">
+          <label>Password</label>
+          <input type="password" class="form-control" name="password" />
+      </div>
+
+      <input type="hidden" name="type" value="wifi" />
+      <input type="submit" value="Update" class="btn btn-success" />
+  </form>
+</div>
+
+<div id="hotspotConfiguration" style="display: none;">
+  <h2>Hotspot Configuration </h2>
+  <p>Configure your hotspot connection. This connection will be treated as metered - we will only upload critial data, such as notifications. </p>
+
+  <form class="configForm">
+      <div class="form-group">
+          <label>SSID</label>
+          <input type="text" class="form-control" name="ssid" value="{{.HotspotSsid}}"/>
+      </div>
+      <div class="form-group">
+          <label>Password</label>
+          <input type="password" class="form-control" name="password" />
+      </div>
+      <input type="hidden" name="type" value="hotspot" />
+      <input type="submit" value="Update" class="btn btn-success" />
+  </form>
+</div>
 
 <script>
-function myFunction() {
-  document.getElementById("Use Wi-Fi").innerHTML = "Give me your SSID:";
+function wifiConfigurationToggle() {
+  var x = document.getElementById("wifiConfiguration");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+
+  var close = document.getElementById("hotspotConfiguration").style.display = "none";
+  document.getElementById("updatedMessage").style.display = "none";
+  document.getElementById("errorMessage").style.display = "none";
 }
 
-</script>
+function hotspotConfigurationToggle() {
+  var x = document.getElementById("hotspotConfiguration");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
 
-<p id="Use Hotspot"></p>
-
-<script>
-function myFunction() {
-  document.getElementById("Use Hotspot").innerHTML = "Give me your SSID:";
+  document.getElementById("wifiConfiguration").style.display = "none";
+  document.getElementById("updatedMessage").style.display = "none";
+  document.getElementById("errorMessage").style.display = "none";
 }
 
+window.addEventListener("load", function () {
+  function sendData(form) {
+    var XHR = new XMLHttpRequest();
+
+    // Bind the FormData object and the form element
+    var FD = new FormData(form);
+
+    // Define what happens on successful data submission
+    XHR.onreadystatechange = function() {
+      if (XHR.readyState == 4 && XHR.status==200) {
+        var updatedMessage = document.getElementById("updatedMessage");
+        updatedMessage.style.display = "block";
+      } else if (XHR.readyState == 4 && XHR.status != 200) {
+        var errorMessage = document.getElementById("errorMessage");
+        errorMessage.style.display = "block";
+      }
+    }
+
+    // Set up our request
+    XHR.open("POST", "/post/config");
+
+    // The data sent is what the user provided in the form
+    XHR.send(FD);
+  }
+ 
+  // Access the form element...
+  var forms = document.getElementsByClassName("configForm");
+
+  // ...and take over its submit event.
+  Array.from(forms).forEach(form => {
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      sendData(form);
+    });
+  });
+});
 </script>
-
-</br>
-
-  <form method="POST" enctype="multipart/form-data">
-    <label for="idx-f">Network</label>
-    <input type="text" id="idx-f" name="test">
-  </br>  
-   </br>  
-    <label for="idx-f">Password</label>
-    <input type="text" id="idx-f" name="test">
-    </br>
-    </br>
-    <input type="submit">
-</form>
 
 <p>
 </br>
@@ -67,7 +145,7 @@ function myFunction() {
 
 </br>
 
-<h3>Configure with <a href="www.onedrive.com">OneDrive</a> 
+<h3>Configure with <a href="https://www.onedrive.com">OneDrive</a> 
 <h3>Configure with <a href="https://docs.pushbullet.com/">Pushbullet</a>
 
 </div>
