@@ -8,7 +8,7 @@ zerostick: certs
 	go build -a -o $(programname) *.go
 
 certs:
-	if [ ! -d zerostick_web/certs ]; then ./generate_certs.sh; fi
+	if [ ! -d zerostick_web/certs ]; then ./scripts/generate_certs.sh; fi
 
 install:
 	go install .
@@ -18,16 +18,16 @@ generate:
 	go generate
 
 image: build_arm6 rclone dms
-	scripts/build_image.sh
+	./scripts/build_image.sh
 
 dist: image
 	zip build/ZeroStick.zip build/pi-gen/deploy/*.img
 
 rclone:
-	scripts/build_rclone.sh
+	./scripts/build_rclone.sh
 
 dms:
-	scripts/build_dms.sh
+	./scripts/build_dms.sh
 
 build_darwin: generate certs
 	GOOS=darwin GOARCH=amd64 go build -tags=deploy_build -a -o ./build/bin/$(programname) *.go
