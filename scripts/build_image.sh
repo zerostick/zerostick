@@ -23,9 +23,6 @@ rm -rf pi-gen
 git clone ${BASEPATH}/cache/pi-gen.git
 cd pi-gen
 
-# Fix build-docker.sh until PR is merged upstream
-git cherry-pick cccce273fbb8e4d3c1a0f0fadf99a99f93b5157d
-
 # Start apt-cacher in case we need to rerun this build
 docker-compose up -d
 
