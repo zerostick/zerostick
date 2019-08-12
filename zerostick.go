@@ -121,6 +121,7 @@ func main() {
 
 	r.HandleFunc("/", indexPage)
 	r.HandleFunc("/index", indexPage)
+	r.HandleFunc("/index.html", indexPage)
 	r.HandleFunc("/config", configPage)
 
 	r.HandleFunc("/post/config", onPostConfigEvent)
@@ -135,7 +136,17 @@ func main() {
 
 	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
 
+	// http server on localhost:8081 for uNabto Tunnel
 	srv := &http.Server{
+		Handler: loggedRouter,
+		Addr:    fmt.Sprintf("%s:%d", "127.0.0.1", 8081),
+		// Good practice: enforce timeouts for servers you create!
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+
+	// https server listening on the configured interface and port
+	srvTLS := &http.Server{
 		Handler: loggedRouter,
 		Addr:    fmt.Sprintf("%s:%d", cfg.Hostname, cfg.Port),
 		// Good practice: enforce timeouts for servers you create!
@@ -147,7 +158,8 @@ func main() {
 	// 	log.Fatalf("server: loadkeys: %s", err)
 	// }
 	// srv.TLSConfig = &tls.Config{Certificates: []tls.Certificate{cert}, InsecureSkipVerify: true}
-	log.Fatal(srv.ListenAndServeTLS(certsRoot+"/cert.pem", certsRoot+"/key.pem"))
+	go log.Fatal(srv.ListenAndServe()) // Run
+	log.Fatal(srvTLS.ListenAndServeTLS(certsRoot+"/cert.pem", certsRoot+"/key.pem"))
 	//http.ListenAndServeTLS(fmt.Sprintf("%s:%d", cfg.Hostname, cfg.Port), certsRoot+"/cert.pem", certsRoot+"/key.pem", loggedRouter)
 }
 
