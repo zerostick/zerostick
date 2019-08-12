@@ -5,5 +5,6 @@ pkg
 build
 zerostick_web/certs
 zerostick
+zerostick.yaml
 tmp
 __debug_bin
