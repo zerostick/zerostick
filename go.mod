@@ -1,4 +1,4 @@
-module github.com/hilli/zerostick
+module github.com/zerostick/zerostick
 
 require (
 	github.com/gorilla/handlers v1.4.0 // http logging handler
