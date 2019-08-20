@@ -18,8 +18,15 @@ if [ "$_IP" ]; then
 fi
 
 # Check and create partitioning
-/usr/local/bin/create_zero_data_partition.sh || true
+for script in `find /opt/zerostick/boot_scripts/ -type f -perm -o=x -exec basename {} \;`; do
+  cd /opt/zerostick/boot_scripts
+  ./${script} || true
+done
 
 modprobe g_mass_storage || true
+
+# Update hostapd.conf with last 3 octets from MAC
+LAST_OF_MAC=`ifconfig wlan0 | grep -ioh '[0-9A-F]\{2\}\(:[0-9A-F]\{2\}\)\{5\}' | cut -f 4,5,6 -d : | tr -d :`
+perl -p -i -e "s/MAC/${LAST_OF_MAC}/"  /etc/hostapd/hostapd.conf
 
 exit 0
