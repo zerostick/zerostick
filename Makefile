@@ -61,6 +61,9 @@ build_win32: generate certs
 run: zerostick
 	./$(programname)
 
+docker_debug:
+	docker run -it --rm --privileged --volumes-from=pigen_work pi-gen /bin/bash
+
 # Development target; Build, push to zerostick.local and restart service
 device: certs
 	GOOS=linux GOARM=6 GOARCH=arm go build -tags=deploy_build -a -o ./build/bin/$(programname) *.go

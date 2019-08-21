@@ -36,6 +36,9 @@ cp ${BASEPATH}/scripts/pi-gen-config config
 # Skip this when the vfs stuff works in zerostick UI
 cp -r ${BASEPATH}/zerostick_web stage_zerostick/03-binaries/
 
+# Cleanup failed attempts
+docker rm -v pigen_work
+
 time ./build-docker.sh
 
 exit 0
