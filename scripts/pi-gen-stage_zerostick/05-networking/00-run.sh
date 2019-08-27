@@ -9,5 +9,5 @@ on_chroot << EOF
 /usr/bin/systemctl unmask hostapd.service
 /usr/bin/systemctl enable hostapd.service
 /usr/bin/systemctl enable dnsmasq.service
-/usr/bin/systemctl disable dhcpcd
+/usr/bin/systemctl disable dhcpcd.service
 EOF
