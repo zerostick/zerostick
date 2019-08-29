@@ -7,7 +7,7 @@ stages:
   - stage: Build
     displayName: Build ZeroStick
     jobs:
-      - job: 'Make image'
+      - job: make_image
         pool: 
           vmImage: 'ubuntu-latest'
         steps:
