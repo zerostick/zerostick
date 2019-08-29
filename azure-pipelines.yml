@@ -1,7 +1,5 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# ZeroStick build in Azure DevOps Pipelines
+# AzDO Pipeline documentation: https://aka.ms/yaml
 
 stages:
   - stage: Build
@@ -12,4 +10,6 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - bash: make image
-        
+          - publish: build/pi-gen/deploy/*.img
+            artifact: ZeroStick.img
+                            
