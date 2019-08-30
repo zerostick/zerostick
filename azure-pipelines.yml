@@ -5,11 +5,10 @@ stages:
   - stage: Build
     displayName: Build ZeroStick
     jobs:
-      - job: make_image
+      - job: make_dist
         pool: 
           vmImage: 'ubuntu-latest'
         steps:
-          - bash: make image
-          - publish: build/pi-gen/deploy/*.img
-            artifact: ZeroStick.img
-                            
+          - bash: make dist
+          - publish: build/ZeroStick.zip
+            artifact: ZeroStick.zip
