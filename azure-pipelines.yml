@@ -1,6 +1,14 @@
 # ZeroStick build in Azure DevOps Pipelines
 # AzDO Pipeline documentation: https://aka.ms/yaml
 
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    exclude:
+        - azure-pipelines.yml 
+
 stages:
   - stage: Build
     displayName: Build ZeroStick
