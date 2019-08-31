@@ -7,7 +7,8 @@ trigger:
       - master
   paths:
     exclude:
-        - azure-pipelines.yml 
+        - azure-pipelines.yml
+        - README.md
 
 stages:
   - stage: Build
@@ -18,5 +19,16 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - bash: make dist
-          - publish: build/ZeroStick.zip
-            artifact: ZeroStick.zip
+          - task: CopyFiles@2
+            displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+            inputs:
+              Contents: build/ZeroStick.zip
+              TargetFolder: '$(Build.ArtifactStagingDirectory)'
+          - task: GitHubRelease@0
+            inputs:
+              gitHubConnection: zerostick
+              repositoryName: zerostick/zerostick
+              action: create
+              tagSource: manual
+              tag: $(Build.BuildNumber)
+              assets: $(Build.ArtifactStagingDirectory)/*.zip
