@@ -8,3 +8,5 @@ require (
 	github.com/spf13/viper v1.4.0
 	gopkg.in/fsnotify.v1 v1.4.7
 )
+
+go 1.13
