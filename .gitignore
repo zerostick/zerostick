@@ -8,3 +8,5 @@ zerostick
 zerostick.yaml
 tmp
 __debug_bin
+src/assets/assets_vfsdata.go
+src/templates/templates_vfsdata.go
