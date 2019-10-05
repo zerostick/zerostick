@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 install -v -o 0 -g 0 -d "${ROOTFS_DIR}/opt/unabto-tunnel"
-install -v -o 0 -g 0 -m 644 files/unabto-tunnel.service "${ROOTFS_DIR}/opt/unabto-tunnel/"
+install -v -o 0 -g 0 -m 644 files/unabto-tunnel.service "${ROOTFS_DIR}/etc/systemd/system/unabto-tunnel.service"
 
 on_chroot << EOF
 
@@ -19,4 +19,6 @@ ninja
 mv unabto_tunnel /opt/unabto-tunnel/
 apt purge -y cmake ninja-build git
 apt autoremove -y
+# Enable service
+systemctl enable unabto-tunnel
 EOF
