@@ -13,7 +13,7 @@ function prep_probe_and_mount() {
         logger -t ZeroStick -s Running fsck on /dev/mapper/zeroVG-${PART}1
         fsck.msdos -a /dev/mapper/zeroVG-${PART}1
         logger -t ZeroStick -s Mounting /dev/mapper/zeroVG-${PART}1 to /${PART}
-        mount -o ro -t msdos /dev/mapper/zeroVG-${PART}1 /${PART}
+        mount -o ro -t vfat /dev/mapper/zeroVG-${PART}1 /${PART}
 
     fi
 
