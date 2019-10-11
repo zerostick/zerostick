@@ -34,6 +34,7 @@ const (
 type config struct {
 	Port     int
 	Hostname string
+	camRoot  string
 	// PathMap string `mapstructure:"path_map"`
 }
 
@@ -62,6 +63,7 @@ func init() {
 	flag.StringVar(&flagConfigFile, "configfile", defaultConfigFile, "Sets the path to the configuration file.")
 	flag.StringVar(&flagHostname, "hostname", "0.0.0.0", "Hostname to listen on.")
 	flag.IntVar(&cfg.Port, "port", 443, "Port number that this program will listen on.")
+	flag.StringVar(&cfg.camRoot, "camroot", "/cam", "Root of the camera files")
 
 	loadTemplates()
 
@@ -99,6 +101,7 @@ func main() {
 	}
 	viper.SetDefault("port", "443")
 	viper.SetDefault("hostname", "0.0.0.0")
+	viper.SetDefault("camRoot", "/cam")
 	viper.AddConfigPath("/etc/zerostick/") // path to look for the config file in
 	viper.AddConfigPath("$HOME/.config/")  // call multiple times to add many search paths
 	viper.AddConfigPath(".")               // optionally look for config in the working directory
@@ -110,12 +113,20 @@ func main() {
 		log.Println("Creating a config file with defaults")
 		viper.WriteConfigAs(fmt.Sprintf("./%s.yaml", defaultConfigFile))
 	}
-	viper.Debug()
+	//viper.Debug()
 
 	cfg.Port = viper.GetInt("port")
 	cfg.Hostname = viper.GetString("hostname")
+	cfg.camRoot = viper.GetString("camroot")
 
 	viper.WriteConfig() // Write the config to file
+
+	// Start camfiles watcher
+	go func() {
+		// Create a gorutine for handling Cam files watcher
+		log.Println("Running cam files watcher on", cfg.camRoot)
+		camfilesWatcher(cfg.camRoot)
+	}()
 
 	r := mux.NewRouter() // Gorilla muxer
 
@@ -203,6 +214,46 @@ func webfilesWatcher() {
 		log.Fatal(err)
 	}
 	<-done
+}
+
+func camfilesWatcher(folder string) {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer watcher.Close()
+
+	done := make(chan bool)
+	go func() {
+		for {
+			select {
+			case event, ok := <-watcher.Events:
+				if !ok {
+					return
+				}
+				// log.Println("FS event:", event)
+				if event.Op&fsnotify.Write == fsnotify.Write {
+					log.Println("FS modified file:", event.Name)
+					handleCamEvents(event.Name)
+				}
+			case err, ok := <-watcher.Errors:
+				if !ok {
+					return
+				}
+				log.Println("error:", err)
+			}
+		}
+	}()
+
+	err = watcher.Add(folder)
+	if err != nil {
+		log.Fatal(err)
+	}
+	<-done
+}
+
+func handleCamEvents(filename string) {
+	log.Println("Found new cam file:", filename)
 }
 
 func indexPage(w http.ResponseWriter, r *http.Request) {
