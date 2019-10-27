@@ -1,0 +1,11 @@
+[Unit]
+Description=Keep network alive.
+After=network.target
+
+
+[Service]
+Type=simple
+ExecStart=/opt/zerostick/scripts/keep_net_alive.sh
+
+[Install]
+WantedBy=multi-user.target
