@@ -45,8 +45,8 @@ func Start() {
 	r.Handle("/favicon.ico", http.NotFoundHandler())
 
 	// config
-	r.HandleFunc("/config", configPage)
-	r.HandleFunc("/post/config", onPostConfigEvent)
+	r.HandleFunc("/config", ConfigPage)
+	r.HandleFunc("/post/config", OnPostConfigEvent)
 
 	// Serve assets
 	fs := http.FileServer(http.Dir(viper.GetString("assetsRoot")))

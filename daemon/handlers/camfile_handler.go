@@ -59,6 +59,7 @@ func ScanCamFS(camfspath string) {
 }
 
 func indexFile(camfspath string, f os.FileInfo) {
+	log.Infoln("New file added: ", camfspath, f.Name())
 	camFSDir := camfspath[len(viper.GetString("cam-root")):] // Cut cam root off
 	// Create shadow FS for thumbnails
 	os.MkdirAll(filepath.Join(ShadowCamFSPath, camFSDir), 0755)

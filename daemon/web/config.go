@@ -12,7 +12,8 @@ type ConfigPageData struct {
 	HotspotSsid string
 }
 
-func configPage(w http.ResponseWriter, r *http.Request) {
+// ConfigPage will render the config page
+func ConfigPage(w http.ResponseWriter, r *http.Request) {
 	var conf ConfigPageData
 	conf.WifiSsid = viper.GetString("wifiSsid")
 	conf.HotspotSsid = viper.GetString("hotspotSsid")
@@ -20,7 +21,8 @@ func configPage(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "config.gohtml", conf)
 }
 
-func onPostConfigEvent(w http.ResponseWriter, r *http.Request) {
+// OnPostConfigEvent will accept the post data from the config page
+func OnPostConfigEvent(w http.ResponseWriter, r *http.Request) {
 	ssid := r.FormValue("ssid")
 	password := r.FormValue("password")
 	formType := r.FormValue("type")

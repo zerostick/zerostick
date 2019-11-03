@@ -1,6 +1,7 @@
 package watchers
 
 import (
+	"github.com/dietsche/rfsnotify"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/zerostick/zerostick/daemon/web"
@@ -9,7 +10,7 @@ import (
 
 // Monitor templates dir for changes and reload if any
 func webfilesWatcher() {
-	watcher, err := fsnotify.NewWatcher()
+	watcher, err := rfsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -37,7 +38,7 @@ func webfilesWatcher() {
 		}
 	}()
 
-	err = watcher.Add(viper.GetString("templatesRoot"))
+	err = watcher.AddRecursive(viper.GetString("templatesRoot"))
 	if err != nil {
 		log.Fatal(err)
 	}
