@@ -59,7 +59,7 @@ build_win32: generate certs
 # 	rm ./build/$(programname).exe
 
 run: zerostick
-	./$(programname)
+	./$(programname) -d serve
 
 # Development target; Build, push to zerostick.local and restart service
 device: certs
