@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v1.1
+        uses: actions/checkout@v1
         with:
           fetch-depth: 1
       - name: Make it - Build the ZeroStick Daemon
