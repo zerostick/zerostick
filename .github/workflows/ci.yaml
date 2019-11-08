@@ -1,0 +1,15 @@
+name: ZeroStick_CI
+
+on: [push]
+
+jobs:
+  build:
+    name: Build_ZeroStick
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v1.1
+        with:
+          fetch-depth: 1
+      - name: Make it - Build the ZeroStick Daemon
+        run: make

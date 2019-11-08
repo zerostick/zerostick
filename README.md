@@ -1,4 +1,5 @@
 [![Build Status](https://dev.azure.com/zerostick/ZeroStick/_apis/build/status/zerostick.zerostick?branchName=master)](https://dev.azure.com/zerostick/ZeroStick/_build/latest?definitionId=1&branchName=master)
+![](https://github.com/actions/zerostick/workflows/ZeroStick_CI/badge.svg)
 
 # Tesla Cam automation with a Raspberry Pi Zero W
 
