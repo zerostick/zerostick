@@ -3,7 +3,7 @@ Description=uNabto Tunnel
 After=network.target
 
 [Service]
-ExecStart=/opt/unabto-tunnel/unabto_tunnel -d zerostick.test.nabto.net -s --allow-port 8081
+ExecStart=/opt/unabto-tunnel/unabto_tunnel -d zerostick.test.nabto.net -N "ZeroStick Device" -P "ZeroStick" -s --allow-port 8081
 WorkingDirectory=/opt/unabto-tunnel
 StandardOutput=inherit
 StandardError=inherit
