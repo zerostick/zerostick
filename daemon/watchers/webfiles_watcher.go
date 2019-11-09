@@ -8,8 +8,8 @@ import (
 	"gopkg.in/fsnotify.v1"
 )
 
-// Monitor templates dir for changes and reload if any
-func webfilesWatcher() {
+// WebfilesWatcher will monitor templates dir for changes and reload if any
+func WebfilesWatcher() {
 	watcher, err := rfsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
