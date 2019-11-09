@@ -2,6 +2,8 @@
 
 install -v -o 0 -g 0 -d "${ROOTFS_DIR}/opt/unabto-tunnel"
 install -v -o 0 -g 0 -m 644 files/unabto-tunnel.service "${ROOTFS_DIR}/etc/systemd/system/unabto-tunnel.service"
+install -v -o 0 -g 0 -m 644 files/zerostick.env "${ROOTFS_DIR}/etc/zerostick.env"
+
 
 on_chroot << EOF
 
