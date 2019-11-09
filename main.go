@@ -9,12 +9,6 @@ import (
 	"github.com/zerostick/zerostick/daemon/cmd"
 )
 
-const (
-	templatesRoot = "./zerostick_web/templates"
-	assetsRoot    = "./zerostick_web/assets"
-	certsRoot     = "./zerostick_web/certs"
-)
-
 func init() {
 	viper.SetDefault("templatesRoot", "./zerostick_web/templates")
 	viper.SetDefault("assetsRoot", "./zerostick_web/assets")
