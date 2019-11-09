@@ -1,6 +1,7 @@
 package web
 
 import (
+	"crypto/tls"
 	"html/template"
 	"net/http"
 	"os"
@@ -48,6 +49,9 @@ func Start() {
 	r.HandleFunc("/config", ConfigPage)
 	r.HandleFunc("/post/config", OnPostConfigEvent)
 
+	// events saved
+	r.HandleFunc("/events", eventsSavedPage)
+
 	// Serve assets
 	fs := http.FileServer(http.Dir(viper.GetString("assetsRoot")))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
@@ -56,7 +60,7 @@ func Start() {
 	camFs := http.FileServer(http.Dir(viper.GetString("cam-root") + "/TeslaCam"))
 	r.PathPrefix("/TeslaCam/").Handler(http.StripPrefix("/TeslaCam", camFs))
 
-	log.Infof("Listening with TLS on %s (Maybe even http://localhost:8081)", viper.GetString("listen"))
+	log.Infof("Listening with TLS on https://%s (Maybe even http://localhost:8081)", viper.GetString("listen"))
 
 	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
 
@@ -77,12 +81,11 @@ func Start() {
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
-	// cert, err := tls.LoadX509KeyPair(certsRoot+"/cert.pem", certsRoot+"/key.pem")
-	// if err != nil {
-	// 	log.Fatalf("server: loadkeys: %s", err)
-	// }
-	// srv.TLSConfig = &tls.Config{Certificates: []tls.Certificate{cert}, InsecureSkipVerify: true}
+	cert, err := tls.LoadX509KeyPair(filepath.Join(viper.GetString("certsRoot"), "cert.pem"), filepath.Join(viper.GetString("certsRoot"), "key.pem"))
+	if err != nil {
+		log.Fatalf("server: loadkeys: %s", err)
+	}
+	srvTLS.TLSConfig = &tls.Config{Certificates: []tls.Certificate{cert}, InsecureSkipVerify: true}
 	go log.Fatal(srv.ListenAndServe()) // Run
-	log.Fatal(srvTLS.ListenAndServeTLS(viper.GetString("certsRoot")+"/cert.pem", viper.GetString("certsRoot")+"/key.pem"))
-	//http.ListenAndServeTLS(fmt.Sprintf("%s:%d", cfg.Hostname, cfg.Port), certsRoot+"/cert.pem", certsRoot+"/key.pem", loggedRouter)
+	log.Fatal(srvTLS.ListenAndServeTLS(filepath.Join(viper.GetString("certsRoot"), "cert.pem"), filepath.Join(viper.GetString("certsRoot"), "key.pem")))
 }
