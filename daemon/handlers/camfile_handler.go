@@ -14,10 +14,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-// VideoFile has the name
+// VideoFile has the metainfomation on each mp4
 type VideoFile struct {
 	Name          string
 	Thumbnailfile string
+	FullPath      string
 	Event         string
 	EventType     string
 	EventTime     time.Time
@@ -25,18 +26,31 @@ type VideoFile struct {
 	Size          int64
 }
 
+// CamFS holds all files
+type CamFS struct {
+	VideoFiles []VideoFile
+}
+
 var (
 	// ShadowCamFSPath holds where to keep temporary files
 	ShadowCamFSPath = filepath.Join(os.TempDir(), "ZeroStick")
 	// CamStructure holds map of path and VideoFile infomation
-	CamStructure = make(map[string]VideoFile)
+	CamStructure CamFS //make(map[string]VideoFile)
 )
+
+func (cfs CamFS) remove(rmFile string) {
+	for i := range cfs.VideoFiles {
+		if cfs.VideoFiles[i].FullPath == rmFile {
+			cfs.VideoFiles[i] = VideoFile{}
+		}
+	}
+}
 
 // HandleCamEvents will update the shadow web
 func HandleCamEvents(filename string) {
 	f, err := os.Stat(filename) // Get os.FileInfo
 	if err != nil {             // Removed file
-		delete(CamStructure, filename)
+		CamStructure.remove(filename)
 	}
 	//log.Println("Found new cam file:", filename)
 	indexFile(viper.GetString("cam-root")+"/TeslaCam", f) // Add f to index
@@ -59,7 +73,7 @@ func ScanCamFS(camfspath string) {
 }
 
 func indexFile(camfspath string, f os.FileInfo) {
-	log.Infoln("New file added: ", camfspath, f.Name())
+	log.Debugln("New file added: ", camfspath, f.Name())
 	camFSDir := camfspath[len(viper.GetString("cam-root")):] // Cut cam root off
 	// Create shadow FS for thumbnails
 	os.MkdirAll(filepath.Join(ShadowCamFSPath, camFSDir), 0755)
@@ -77,7 +91,7 @@ func indexFile(camfspath string, f os.FileInfo) {
 			error := GenerateCoverImage(camFile, thumbnailfile)
 			parseFileDetails(camFile, &v) // Stuff additional details into v from the path
 			if error == nil {             // Add file to index, if the was no generateCoverImage error (Which means that the file is corrupted)
-				CamStructure[camFile] = v
+				CamStructure.VideoFiles = append(CamStructure.VideoFiles, v)
 			}
 		}
 	}
