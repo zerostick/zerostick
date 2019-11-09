@@ -129,6 +129,9 @@ func parseFileDetails(path string, videoFile *VideoFile) {
 	rgxp := regexp.MustCompile(`/TeslaCam/(?P<EventType>.*)/(?P<Event>\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})/(?P<ClipTime>\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})-(?P<ClipCamera>.*).mp4$`)
 	matches := rgxp.FindStringSubmatch(path)
 	subnames := rgxp.SubexpNames()
+	if len(matches) == 0 {
+		return
+	}
 	// Copy matches to map
 	r := make(map[string]string)
 	for i, v := range subnames {
