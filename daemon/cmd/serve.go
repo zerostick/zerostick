@@ -28,6 +28,9 @@ var (
 				log.Println("Running cam files watcher on", filepath.Join(viper.GetString("cam-root"), "TeslaCam"))
 				watchers.CamfilesWatcher(filepath.Join(viper.GetString("cam-root"), "TeslaCam"))
 			}()
+			go func() {
+				watchers.WebfilesWatcher()
+			}()
 			// Launch web interface
 			web.Start()
 		},
