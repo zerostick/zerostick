@@ -16,6 +16,6 @@ jobs:
       - name: Release the image
         uses: JasonEtco/upload-to-release@master
         with:
-          args: build/ZeroStick.zip application/zip
+          args: ZeroStick.zip application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -21,7 +21,8 @@ image: build_arm6 rclone dms
 	./scripts/build_image.sh
 
 dist: image
-	zip build/ZeroStick.zip build/pi-gen/deploy/*.img
+	mv build/pi-gen/deploy/*.img .
+	zip -9 ZeroStick.zip *.img
 
 rclone:
 	./scripts/build_rclone.sh

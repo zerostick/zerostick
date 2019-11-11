@@ -22,7 +22,7 @@ stages:
           - task: CopyFiles@2
             displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
             inputs:
-              Contents: build/ZeroStick.zip
+              Contents: ZeroStick.zip
               TargetFolder: '$(Build.ArtifactStagingDirectory)'
           - task: GitHubRelease@0
             inputs:
