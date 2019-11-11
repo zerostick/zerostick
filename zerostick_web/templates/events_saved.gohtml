@@ -1,0 +1,22 @@
+{{ template "header" }}
+<body>
+<div class="content">
+
+{{ len .VideoFiles }} videos saved.
+<!--
+{{ printf "%#v" .VideoFiles }}
+-->
+<h2>Saved Events</h2>
+<ul>
+{{ range $i, $v := .VideoFiles }}
+    {{- if .ThumbnailRelPath }}
+        <li><a href="../video/{{ .Id }}" title="{{ .Name }}"><img src="../{{ .ThumbnailRelPath }}"/></a></li>
+    {{ end -}}
+{{ end }}
+</ul>
+{{ if . }}
+<h1>Here are the contents of the file:</h1>
+{{ . }}
+{{ end }}
+</body>
+{{ template "footer" }}

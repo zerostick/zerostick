@@ -52,12 +52,15 @@ func Start() {
 	// events saved
 	r.HandleFunc("/events", eventsSavedPage)
 
+	// send a video
+	r.HandleFunc("/video/{id}", sendVideo)
+
 	// Serve assets
 	fs := http.FileServer(http.Dir(viper.GetString("assetsRoot")))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
 
 	// Serve TeslaCam files
-	camFs := http.FileServer(http.Dir(viper.GetString("cam-root") + "/TeslaCam"))
+	camFs := http.FileServer(http.Dir(zshandlers.ShadowCamFSPath + "/TeslaCam"))
 	r.PathPrefix("/TeslaCam/").Handler(http.StripPrefix("/TeslaCam", camFs))
 
 	log.Infof("Listening with TLS on https://%s (Maybe even http://localhost:8081)", viper.GetString("listen"))

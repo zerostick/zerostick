@@ -10,20 +10,23 @@ import (
 	"regexp"
 	"time"
 
+	guuid "github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 // VideoFile has the metainfomation on each mp4
 type VideoFile struct {
-	Name          string
-	Thumbnailfile string
-	FullPath      string
-	Event         string
-	EventType     string
-	EventTime     time.Time
-	EventCam      string
-	Size          int64
+	Id               string // Generated UUID
+	Name             string
+	ThumbnailFile    string
+	ThumbnailRelPath string
+	FullPath         string
+	Event            string
+	EventType        string
+	EventTime        time.Time
+	EventCam         string
+	Size             int64
 }
 
 // CamFS holds all files
@@ -44,6 +47,16 @@ func (cfs CamFS) remove(rmFile string) {
 			cfs.VideoFiles[i] = VideoFile{}
 		}
 	}
+}
+
+// FindByID will return the VideoFile with the given `id`
+func (cfs CamFS) FindByID(id string) (VideoFile, error) {
+	for i := range cfs.VideoFiles {
+		if cfs.VideoFiles[i].Id == id {
+			return cfs.VideoFiles[i], nil
+		}
+	}
+	return VideoFile{}, fmt.Errorf("VideoFile with Id %s not found", id)
 }
 
 // HandleCamEvents will update the shadow web
@@ -83,12 +96,14 @@ func indexFile(camfspath string, f os.FileInfo) {
 		log.Warn("Ignoring ", f.Name(), "(", f.Size(), " bytes)")
 	} else { // File is not corrupted
 		if f.Name()[len(f.Name())-4:] == ".mp4" { // If extension matches .mp4
+			v.Id = guuid.New().String()
 			v.Name = f.Name()
 			v.Size = f.Size()
-			thumbnailfile := filepath.Join(ShadowCamFSPath, camFSDir, fmt.Sprintf("%s.jpg", f.Name()))
-			v.Thumbnailfile = thumbnailfile
+			v.FullPath = camfspath
+			v.ThumbnailRelPath = filepath.Join(camFSDir, fmt.Sprintf("%s.jpg", f.Name()))
+			v.ThumbnailFile = filepath.Join(ShadowCamFSPath, v.ThumbnailRelPath)
 			camFile := filepath.Join(camfspath, f.Name())
-			error := GenerateCoverImage(camFile, thumbnailfile)
+			error := GenerateCoverImage(camFile, v.ThumbnailFile, 128)
 			parseFileDetails(camFile, &v) // Stuff additional details into v from the path
 			if error == nil {             // Add file to index, if the was no generateCoverImage error (Which means that the file is corrupted)
 				CamStructure.VideoFiles = append(CamStructure.VideoFiles, v)
@@ -99,10 +114,12 @@ func indexFile(camfspath string, f os.FileInfo) {
 
 // SteamEnableVideo will move the `mdat` part after the `moov` metadata
 // so the file is ready for streaming.
-func SteamEnableVideo(videoFile string, outFile string) {
+func SteamEnableVideo(videoFile string, outFile string) error {
+	log.Debugln("Streaming enabling", videoFile, "as", outFile)
 	// ffmpeg -i INPUT_FILE -c:v copy -crf 0 -movflags +faststart OUTPUT_FILE
 	out, err := getCommandOutput("ffmpeg", "-i", videoFile, "-c:v", "copy", "-crf", "0", "-movflags", "+faststart", outFile)
-	log.Debug(out, err)
+	log.Debug("Conversion output:", out, err)
+	return err
 }
 
 // GenerateCoverImage will genarate a cover image for the video file
@@ -126,7 +143,7 @@ func GenerateCoverImage(videoFile string, outFile string, imageWidth ...int) err
 func parseFileDetails(path string, videoFile *VideoFile) {
 	// Paths has <something>/TeslaCam/SavedClips/2019-08-01_17-55-02/2019-08-01_17-56-02-front.mp4 format
 	timeFormat := "2006-01-02_15-04-05" // https://stackoverflow.com/a/14106561/10334686
-	rgxp := regexp.MustCompile(`/TeslaCam/(?P<EventType>.*)/(?P<Event>\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})/(?P<ClipTime>\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})-(?P<ClipCamera>.*).mp4$`)
+	rgxp := regexp.MustCompile(`/TeslaCam/((?P<EventType>.*)/(?P<Event>\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})/)?(?P<ClipTime>\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})-(?P<ClipCamera>.*).mp4$`)
 	matches := rgxp.FindStringSubmatch(path)
 	subnames := rgxp.SubexpNames()
 	if len(matches) == 0 {
