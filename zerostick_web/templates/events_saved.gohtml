@@ -2,21 +2,32 @@
 <body>
 <div class="content">
 
-{{ len .VideoFiles }} videos saved.
-<!--
-{{ printf "%#v" .VideoFiles }}
--->
-<h2>Saved Events</h2>
-<ul>
-{{ range $i, $v := .VideoFiles }}
-    {{- if .ThumbnailRelPath }}
-        <li><a href="../video/{{ .Id }}" title="{{ .Name }}"><img src="../{{ .ThumbnailRelPath }}"/></a></li>
+{{ range $i, $v := . }}
+<h2>{{ $i }}</h2>
+<table>
+  <tr>
+     <th>Time</th>
+     <th>Clips</th>
+  </tr>
+  {{- range $j, $b := $v }}
+  <tr>
+    <td valign="top" style="white-space: nowrap;">{{ $j }}</td>
+    <td>
+    {{- range $b }}
+      <a href="../video/{{ .Id }}" title="{{ .Name }}"><img src="../{{ .ThumbnailRelPath }}"/></a>
     {{ end -}}
+    </td>
+  </tr>
+  {{ end }}
+</table>
 {{ end }}
-</ul>
+
+
+<!--
+Here are the contents of the context passed:
 {{ if . }}
-<h1>Here are the contents of the file:</h1>
-{{ . }}
+    {{ printf "%#v" . }}
 {{ end }}
+-->
 </body>
 {{ template "footer" }}

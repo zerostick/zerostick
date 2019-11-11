@@ -59,6 +59,21 @@ func (cfs CamFS) FindByID(id string) (VideoFile, error) {
 	return VideoFile{}, fmt.Errorf("VideoFile with Id %s not found", id)
 }
 
+func (cfs CamFS) EventsSorted() map[string]map[string][]VideoFile {
+	r := make(map[string]map[string][]VideoFile)
+	for i := range cfs.VideoFiles {
+		//r[cfs.VideoFiles[i].Event] = append(r[cfs.VideoFiles[i].Event], cfs.VideoFiles[i])
+		vf := r[cfs.VideoFiles[i].EventType][cfs.VideoFiles[i].Event]
+		log.Debug("VF is", append(vf, cfs.VideoFiles[i]))
+		if r[cfs.VideoFiles[i].EventType] == nil {
+			r[cfs.VideoFiles[i].EventType] = map[string][]VideoFile{}
+		}
+		r[cfs.VideoFiles[i].EventType][cfs.VideoFiles[i].Event] = append(vf, cfs.VideoFiles[i])
+	}
+	log.Debug(r)
+	return r
+}
+
 // HandleCamEvents will update the shadow web
 func HandleCamEvents(filename string) {
 	f, err := os.Stat(filename) // Get os.FileInfo
