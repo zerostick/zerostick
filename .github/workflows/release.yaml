@@ -1,0 +1,21 @@
+name: ZeroStick_CI
+
+on: release
+
+jobs:
+  build:
+    name: Build_ZeroStick
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Make it - Build the ZeroStick Daemon
+        run: make dist
+      - name: Release the image
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: build/ZeroStick.zip application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
