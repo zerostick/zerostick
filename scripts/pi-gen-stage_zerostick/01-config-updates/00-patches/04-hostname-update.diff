@@ -1,5 +1,0 @@
---- stage_zerostick/rootfs/etc/hostname
-+++ stage_zerostick/rootfs/etc/hostname
-@@ -1 +1 @@
--raspberrypi
-+zerostick
