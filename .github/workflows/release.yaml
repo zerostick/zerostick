@@ -1,10 +1,13 @@
 name: ZeroStick_CI
 
-on: release
+on: 
+  push:
+    tags:
+      - 'v*'  # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   build:
-    name: Build_ZeroStick
+    name: Build_ZeroStick_Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
@@ -13,6 +16,16 @@ jobs:
           fetch-depth: 1
       - name: Make it - Build the ZeroStick Daemon
         run: make dist
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
       - name: Release the image
         uses: JasonEtco/upload-to-release@master
         with:
