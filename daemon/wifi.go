@@ -25,7 +25,7 @@ type Wifis struct {
 
 // GetWifiConfig returns the Wifi as wpa_supplicant.conf block
 func (w Wifi) GetWifiConfig() string {
-	return fmt.Sprintf("network={\n\tssid\"%s\"\npsk=\"%s\"\npriority=%d\n}\n", w.SSID, w.EncryptedPassword, w.Priority)
+	return fmt.Sprintf("network={\n\tssid\"%s\"\n\tpsk=%s\n\tpriority=%d\n}\n", w.SSID, w.EncryptedPassword, w.Priority)
 }
 
 // AddWifiToList appends the given Wifi to the list

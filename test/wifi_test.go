@@ -35,3 +35,43 @@ func TestWifis(t *testing.T) {
 		t.Errorf("Wifis does not have a single wifi config, but contains %+v", wifis)
 	}
 }
+
+func TestGetWpaSupplicantConf(t *testing.T) {
+	wifi := &zs.Wifi{
+		SSID:       "flaf",
+		Password:   "flaf",
+		Priority:   1,
+		UseForSync: false,
+	}
+	wifi.EncryptPassword()
+	wifi2 := &zs.Wifi{
+		SSID:       "flaf22",
+		Password:   "flaf22",
+		Priority:   22,
+		UseForSync: false,
+	}
+	wifi2.EncryptPassword()
+
+	wifis := zs.Wifis{}
+	wifis.AddWifiToList(*wifi)
+	wifis.AddWifiToList(*wifi2)
+
+	expectedConfig := `ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=US
+network={
+	ssid"flaf"
+	psk=21ad66ddf9a61afa2a66d9cf233c722e3993b2dd361b5ca1c3456dd7ea9d8ff4
+	priority=1
+}
+network={
+	ssid"flaf22"
+	psk=6abd60875676ec4c046945a7773f09ce7b8d49b219a514479a49d50e85b74629
+	priority=22
+}
+`
+	generatedConfig := wifis.GetWpaSupplicantConf()
+	if generatedConfig != expectedConfig {
+		t.Errorf("%s", generatedConfig)
+	}
+}
