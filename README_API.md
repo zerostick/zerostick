@@ -1,6 +1,6 @@
 # API Endpoints:
 
-## /wifi/list
+## /wifilist
 GET: List of scanned SSIDs
 {
     wifi: ["ap2", "ap1"]
@@ -19,5 +19,7 @@ POST: Save deviceID and key
 { "deviceid": "devid", "key": "nabtokey" }
 
 ## /nabto/delete_acl
-DELETE: Deletes ACL file
+DELETE: Deletes Nabto ACL file
 
+## /events
+GET: Get all events metadata

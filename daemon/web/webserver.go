@@ -53,7 +53,11 @@ func Start() {
 	r.HandleFunc("/events", eventsSavedPage)
 
 	// send a video
-	r.HandleFunc("/video/{id}", sendVideo)
+	r.HandleFunc("/video/{id}", sendVideo).Name("videoRoute")
+
+	// Wifi Configuration
+	r.HandleFunc("/wifilist", wifilist).Name("wifilist").Methods("GET")
+	r.HandleFunc("/wifi/{id}", wifi).Name("wifiRoute").Methods("GET", "POST", "DELETE")
 
 	// Serve assets
 	fs := http.FileServer(http.Dir(viper.GetString("assetsRoot")))
