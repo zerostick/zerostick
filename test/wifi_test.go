@@ -75,3 +75,13 @@ network={
 		t.Errorf("%s", generatedConfig)
 	}
 }
+
+func TestWifiList(t *testing.T) {
+	scan, err := zs.ScanNetworks()
+	if err != nil {
+		t.Errorf("ScanNetwork() failed. Check the mocks. %s", err)
+	}
+	if len(scan) != 3 {
+		t.Errorf("Scan of Wifi return not expected: %+v", scan)
+	}
+}

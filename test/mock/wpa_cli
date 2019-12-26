@@ -1,0 +1,34 @@
+#!/bin/bash
+
+if [[ "$*" == "-i wlan0 scan" ]]
+then
+    echo "OK"
+else
+cat << EOF
+bssid / frequency / signal level / flags / ssid
+80:2a:a8:c1:b6:7d	2412	-52	[WPA2-PSK-CCMP][ESS]	AirExtreme
+80:2a:a8:c2:b6:7d	5180	-71	[WPA2-PSK-CCMP][ESS]	AirExtreme
+82:2a:a8:c2:b6:7d	5180	-71	[WPA2-EAP-CCMP][ESS]	AirEnterprises
+92:2a:a8:c2:b6:7d	5180	-71	[WPA2-PSK-CCMP][ESS]	AirKids
+80:2a:a8:c2:b6:3c	5180	-65	[WPA2-PSK-CCMP][ESS]	AirExtreme
+82:2a:a8:c2:b6:3c	5180	-65	[WPA2-EAP-CCMP][ESS]	AirEnterprises
+92:2a:a8:c2:b6:3c	5180	-65	[WPA2-PSK-CCMP][ESS]	AirKids
+a2:2a:a8:c1:b6:7d	2412	-52	[WPA2-PSK-CCMP][ESS]
+92:2a:a8:c1:b6:7d	2412	-52	[WPA2-PSK-CCMP][ESS]	AirKids
+82:2a:a8:c1:b6:7d	2412	-56	[WPA2-EAP-CCMP][ESS]	AirEnterprises
+82:2a:a8:c1:b6:3c	2462	-61	[WPA2-EAP-CCMP][ESS]	AirEnterprises
+92:2a:a8:c1:b6:3c	2462	-61	[WPA2-PSK-CCMP][ESS]	AirKids
+80:2a:a8:c1:b6:3c	2462	-61	[WPA2-PSK-CCMP][ESS]	AirExtreme
+80:2a:a8:c1:b5:c1	2437	-67	[WPA2-PSK-CCMP][ESS]	AirExtreme
+82:2a:a8:c1:b5:c1	2437	-67	[WPA2-EAP-CCMP][ESS]	AirEnterprises
+92:2a:a8:c1:b5:c1	2437	-69	[WPA2-PSK-CCMP][ESS]	AirKids
+80:2a:a8:c2:b5:c1	5640	-81	[WPA2-PSK-CCMP][ESS]	AirExtreme
+2a:e8:29:a7:b4:92	2437	-72	[WPA2-PSK-CCMP][ESS]	AirKids
+92:2a:a8:c2:b5:c1	5640	-82	[WPA2-PSK-CCMP][ESS]	AirKids
+82:2a:a8:c2:b5:c1	5640	-82	[WPA2-EAP-CCMP][ESS]	AirEnterprises
+dc:a4:ca:ba:f5:28	2437	-73	[WPA2-PSK-CCMP][ESS]	Hans
+00:55:da:50:82:99	2412	-62	[ESS]	Nanoleaf Light Panels 50:82:99
+EOF
+
+fi
+

@@ -4,9 +4,12 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
-	"io/ioutil"
-
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/pbkdf2"
+	"io/ioutil"
+	"os/exec"
+	"strings"
+	"time"
 )
 
 // Wifi properties struct
@@ -21,6 +24,15 @@ type Wifi struct {
 // Wifis is a slice of Wifi
 type Wifis struct {
 	Wifis []Wifi `json:"wifis"`
+}
+
+// WpaNetwork defines a wifi network to connect to.
+type WpaNetwork struct {
+	Bssid       string `json:"bssid"`
+	Frequency   string `json:"frequency"`
+	SignalLevel string `json:"signal_level"`
+	Flags       string `json:"flags"`
+	Ssid        string `json:"ssid"`
 }
 
 // GetWifiConfig returns the Wifi as wpa_supplicant.conf block
@@ -65,4 +77,51 @@ func (ws Wifis) WriteConfig(wpaSupplicantFile string) error {
 		return err
 	}
 	return nil
+}
+
+// ScanNetworks returns a map of WpaNetwork data structures.
+func ScanNetworks() (map[string]WpaNetwork, error) {
+	wpaNetworks := make(map[string]WpaNetwork, 0)
+
+	scanOut, err := exec.Command("wpa_cli", "-i", "wlan0", "scan").Output()
+	if err != nil {
+		//log.Fatal(err)
+		return wpaNetworks, err
+	}
+	scanOutClean := strings.TrimSpace(string(scanOut))
+
+	// wait one second for results
+	time.Sleep(1 * time.Second)
+
+	if scanOutClean == "OK" {
+		log.Debug("OK scan")
+		networkListOut, err := exec.Command("wpa_cli", "-i", "wlan0", "scan_results").Output()
+		if err != nil {
+			//wpa.Log.Fatal(err)
+			return wpaNetworks, err
+		}
+
+		networkListOutArr := strings.Split(string(networkListOut), "\n")
+		for _, netRecord := range networkListOutArr[1:] {
+			if !strings.Contains(netRecord, "[WPA2-PSK-CCMP]") {
+				continue
+			}
+
+			fields := strings.Fields(netRecord)
+
+			if len(fields) > 4 {
+				ssid := strings.Join(fields[4:], " ")
+				wpaNetworks[ssid] = WpaNetwork{
+					Bssid:       fields[0],
+					Frequency:   fields[1],
+					SignalLevel: fields[2],
+					Flags:       fields[3],
+					Ssid:        ssid,
+				}
+			}
+		}
+
+	}
+
+	return wpaNetworks, nil
 }
