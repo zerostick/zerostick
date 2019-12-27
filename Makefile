@@ -70,7 +70,7 @@ ui_dev:
 	yarn start
 
 test:
-	PATH=`pwd`/test/mock:$(PATH) go test -v test/*.go
+	PATH="`pwd`/test/mock:$(PATH)" go test -v test/*.go
 
 run: zerostick
 	./$(programname) -d serve
