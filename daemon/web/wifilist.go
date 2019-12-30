@@ -3,11 +3,12 @@ package web
 import (
 	"encoding/json"
 	"fmt"
-	zs "github.com/zerostick/zerostick/daemon"
 	"net/http"
+
+	zs "github.com/zerostick/zerostick/daemon"
 )
 
-func wifilist(w http.ResponseWriter, r *http.Request) {
+func Wifilist(w http.ResponseWriter, r *http.Request) {
 	// iwlistCmd := exec.Command("iwlist", "wlan0", "scan")
 	// iwlistCmdOut, err := iwlistCmd.Output()
 	wifiList, err := zs.ScanNetworks()

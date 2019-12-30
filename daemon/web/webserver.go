@@ -21,7 +21,7 @@ var (
 )
 
 func init() {
-	r = mux.NewRouter() // New Gorilla muxer
+	r = mux.NewRouter().StrictSlash(true) // New Gorilla muxer
 }
 
 // LoadTemplates load html templates from file
@@ -42,22 +42,23 @@ func Start() {
 	// index
 	r.HandleFunc("/", indexPage)
 	r.HandleFunc("/index", indexPage)
-	r.HandleFunc("/index.html", indexPage)
-	r.Handle("/favicon.ico", http.NotFoundHandler())
+	r.PathPrefix("/index.html").HandlerFunc(indexPage).Methods("GET") // Show frontpage
+	r.Handle("/favicon.ico", http.NotFoundHandler())                  // Return 404 on favicon.ico
 
 	// config
 	r.HandleFunc("/config", ConfigPage)
 	r.HandleFunc("/post/config", OnPostConfigEvent)
 
 	// events saved
-	r.HandleFunc("/events", eventsSavedPage)
+	r.HandleFunc("/events", eventsSavedPage).Methods("GET")
 
 	// send a video
 	r.HandleFunc("/video/{id}", sendVideo).Name("videoRoute")
 
 	// Wifi Configuration
-	r.HandleFunc("/wifilist", wifilist).Name("wifilist").Methods("GET")
-	r.HandleFunc("/wifi/{id}", wifi).Name("wifiRoute").Methods("GET", "POST", "DELETE")
+	r.PathPrefix("/wifilist").HandlerFunc(Wifilist).Name("wifilist").Methods("GET")
+	r.PathPrefix("/wifi").HandlerFunc(WifiGetEntries).Name("Wifi Get").Methods("GET")
+	//r.HandleFunc("/wifi/{id}", wifi).Name("wifiRoute").Methods("GET", "POST", "DELETE")
 
 	// Serve assets
 	fs := http.FileServer(http.Dir(viper.GetString("assetsRoot")))
