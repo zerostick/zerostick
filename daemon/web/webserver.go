@@ -62,7 +62,7 @@ func Start() {
 	r.PathPrefix("/wifilist").HandlerFunc(Wifilist).Name("wifilist").Methods("GET")
 	r.PathPrefix("/wifi").HandlerFunc(WifiGetEntries).Name("Wifi Get").Methods("GET")
 	r.PathPrefix("/wifi").HandlerFunc(WifiAddEntry).Name("Wifi Add").Methods("POST")
-	//r.HandleFunc("/wifi/{id}", wifi).Name("wifiRoute").Methods("GET", "POST", "DELETE")
+	r.PathPrefix("/wifi/{id}").HandlerFunc(WifiDeleteEntry).Name("Wifi Delete").Methods("DELETE")
 
 	// Serve assets
 	fs := http.FileServer(http.Dir(viper.GetString("assetsRoot")))

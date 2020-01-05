@@ -43,9 +43,26 @@ func (w Wifi) String() string {
 
 // AddWifiToList appends the given Wifi to the list
 func (ws *Wifis) AddWifiToList(w Wifi) {
+	ws.DeleteWifiFromList(w.SSID) // Remove the SSID from the list first
 	ws.List = append(ws.List, w)
 	viper.Set("wifis", ws.List)
 	viper.WriteConfig()
+}
+
+// DeleteWifiFromList will remove a wifi (given the SSID string) from the list if it's there
+func (ws *Wifis) DeleteWifiFromList(SSID string) {
+	changed := false
+	for k, v := range ws.List {
+		if v.SSID == SSID {
+			ws.List = append(ws.List[:k], ws.List[k+1:]...)
+			changed = true
+			// log.Debugf("DELETE $d element leaves %+v", k, ws.List)
+		}
+	}
+	if changed {
+		viper.Set("wifis", ws.List)
+		viper.WriteConfig()
+	}
 }
 
 // encryptPassword returns password as a WPA2 formatted hash

@@ -61,9 +61,9 @@ Returns:
 {"ssid":"flaf22","encrypted_password":"9816f2e2f268fd66b600e58ae5a3ce02cdfff0aaa57750e918e77e772fb0871a","priority":22,"use_for_sync":false}
 ```
 
-### DELETE: Deletes :id
+### DELETE: Deletes /wifi/:id
 ```bash
-
+curl -X DELETE http://localhost:8081/wifi/flaf22
 ```
 
 Returns:
