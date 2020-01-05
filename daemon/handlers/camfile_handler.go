@@ -98,6 +98,7 @@ func ScanCamFS(camfspath string) {
 			indexFile(camfspath, f)
 		}
 	}
+	log.Debugf("ScanCamFS run done for %s.", camfspath)
 }
 
 func indexFile(camfspath string, f os.FileInfo) {
