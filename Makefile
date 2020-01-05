@@ -75,6 +75,9 @@ test:
 run: zerostick
 	./$(programname) -d serve
 
+runmock: zerostick
+	PATH="`pwd`/test/mock:$(PATH)" ./$(programname) -d serve
+
 # Development target; Build, push to zerostick.local and restart service
 device: certs
 	GOOS=linux GOARM=6 GOARCH=arm go build -tags=deploy_build -a -o ./build/bin/$(programname) *.go
