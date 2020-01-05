@@ -8,9 +8,8 @@ import (
 	zs "github.com/zerostick/zerostick/daemon"
 )
 
+// Wifilist scans the network for available SSIDs and returns a list in JSON
 func Wifilist(w http.ResponseWriter, r *http.Request) {
-	// iwlistCmd := exec.Command("iwlist", "wlan0", "scan")
-	// iwlistCmdOut, err := iwlistCmd.Output()
 	wifiList, err := zs.ScanNetworks()
 	if err != nil {
 		fmt.Println(err, "Error scanning for networks.")
