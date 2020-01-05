@@ -149,7 +149,7 @@ func (ws *Wifis) ParseViperWifi() {
 	if viper.IsSet("wifis") {
 		err := viper.UnmarshalKey("wifis", &ws.List)
 		if err != nil {
-			fmt.Println("Error unmarshalling", err)
+			log.Println("Error unmarshalling", err)
 		}
 	} else {
 		ws.List = nil

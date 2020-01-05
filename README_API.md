@@ -67,17 +67,38 @@ curl -X DELETE http://localhost:8081/wifi/flaf22
 ```
 
 Returns:
-```json
-
-```
+*Nothing*
 
 ## /nabto/
-GET: Get DeviceID
-POST: Save deviceID and key
-{ "deviceid": "devid", "key": "nabtokey" }
+### GET: Get DeviceID
+```bash
+curl "http://localhost:8081/nabto"
+```
+Return:
+```json
+"devid"
+```
+
+### POST: Save deviceID and key
+```bash
+curl -v -d '{ 
+    "deviceid": "devid", 
+    "devicekey": "nabtokey"
+}' -H "Content-Type: application/json" "http://localhost:8081/nabto"
+```
+Returns:
+```json
+{"deviceid":"devid","devicekey":"nabtokey"}
+```
+
 
 ## /nabto/delete_acl
-DELETE: Deletes Nabto ACL file
+### DELETE: Deletes Nabto ACL file
+```bash
+curl -X DELETE "http://localhost:8081/nabto/delete_acl"
+```
+Returns:
+*Nothing*
 
 ## /events
-GET: Get all events metadata
+### GET: Get all events metadata

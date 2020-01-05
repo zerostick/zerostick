@@ -58,11 +58,17 @@ func Start() {
 	// send a video
 	r.HandleFunc("/video/{id}", sendVideo).Name("videoRoute")
 
-	// Wifi Configuration
+	// Wifilist scans the network for available SSIDs
 	r.PathPrefix("/wifilist").HandlerFunc(Wifilist).Name("wifilist").Methods("GET")
+	// Wifi Configuration
 	r.PathPrefix("/wifi").HandlerFunc(WifiGetEntries).Name("Wifi Get").Methods("GET")
 	r.PathPrefix("/wifi").HandlerFunc(WifiAddEntry).Name("Wifi Add").Methods("POST")
 	r.PathPrefix("/wifi/{id}").HandlerFunc(WifiDeleteEntry).Name("Wifi Delete").Methods("DELETE")
+
+	// Nabto
+	r.PathPrefix("/nabto").HandlerFunc(NabtoDeviceID).Name("Nabto Get").Methods("GET")
+	r.PathPrefix("/nabto").HandlerFunc(NabtoSetup).Name("Nabto Post").Methods("POST")
+	r.PathPrefix("/nabto").HandlerFunc(NabtoDeleteACL).Name("Nabto delete saved creds").Methods("DELETE")
 
 	// Serve assets
 	fs := http.FileServer(http.Dir(viper.GetString("assetsRoot")))
