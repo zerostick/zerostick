@@ -33,8 +33,11 @@ func LoadTemplates() {
 func Start() {
 	// Load HTML
 	LoadTemplates()
-	// Scan FS for present TeslaCam recordings
-	zshandlers.ScanCamFS(filepath.Join(viper.GetString("cam-root"), "TeslaCam"))
+
+	// Scan FS for present TeslaCam recordings in the background
+	go func() {
+		zshandlers.ScanCamFS(filepath.Join(viper.GetString("cam-root"), "TeslaCam"))
+	}()
 
 	// Start inotify watcher on the TeslaCam folder
 	//watchers.CamfilesWatcher(filepath.Join(viper.GetString("cam-root"), "TeslaCam"))
@@ -58,6 +61,7 @@ func Start() {
 	// Wifi Configuration
 	r.PathPrefix("/wifilist").HandlerFunc(Wifilist).Name("wifilist").Methods("GET")
 	r.PathPrefix("/wifi").HandlerFunc(WifiGetEntries).Name("Wifi Get").Methods("GET")
+	r.PathPrefix("/wifi").HandlerFunc(WifiAddEntry).Name("Wifi Add").Methods("POST")
 	//r.HandleFunc("/wifi/{id}", wifi).Name("wifiRoute").Methods("GET", "POST", "DELETE")
 
 	// Serve assets
