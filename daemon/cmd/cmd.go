@@ -43,6 +43,7 @@ func initConfig() {
 		log.SetReportCaller(true)
 	}
 
+	viper.SetConfigType("yaml")
 	viper.SetConfigFile(cfgFile)
 	// Read config
 	viper.AutomaticEnv()
