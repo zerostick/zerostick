@@ -31,7 +31,7 @@ func TestWifis(t *testing.T) {
 
 	wifis := zs.Wifis{}
 	wifis.AddWifiToList(*wifi)
-	if len(wifis.Wifis) != 1 {
+	if len(wifis.List) != 1 {
 		t.Errorf("Wifis does not have a single wifi config, but contains %+v", wifis)
 	}
 }

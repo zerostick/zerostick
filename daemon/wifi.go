@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"golang.org/x/crypto/pbkdf2"
 	"io/ioutil"
 	"os/exec"
@@ -15,7 +16,7 @@ import (
 // Wifi properties struct
 type Wifi struct {
 	SSID              string `json:"ssid"`
-	Password          string
+	Password          string `json:",omitempty" yaml:",omitempty"`
 	EncryptedPassword string `json:"encrypted_password"`
 	Priority          int    `json:"priority"`
 	UseForSync        bool   `json:"use_for_sync"`
@@ -23,7 +24,7 @@ type Wifi struct {
 
 // Wifis is a slice of Wifi
 type Wifis struct {
-	Wifis []Wifi `json:"wifis"`
+	List []Wifi `json:"wifis"`
 }
 
 // WpaNetwork defines a wifi network to connect to.
@@ -36,13 +37,15 @@ type WpaNetwork struct {
 }
 
 // GetWifiConfig returns the Wifi as wpa_supplicant.conf block
-func (w Wifi) GetWifiConfig() string {
+func (w Wifi) String() string {
 	return fmt.Sprintf("network={\n\tssid\"%s\"\n\tpsk=%s\n\tpriority=%d\n}\n", w.SSID, w.EncryptedPassword, w.Priority)
 }
 
 // AddWifiToList appends the given Wifi to the list
 func (ws *Wifis) AddWifiToList(w Wifi) {
-	ws.Wifis = append(ws.Wifis, w)
+	ws.List = append(ws.List, w)
+	viper.Set("wifis", ws.List)
+	viper.WriteConfig()
 }
 
 // encryptPassword returns password as a WPA2 formatted hash
@@ -61,8 +64,8 @@ func (w *Wifi) EncryptPassword() {
 // GetWpaSupplicantConf generates a wpa_supplicant.conf file
 func (ws Wifis) GetWpaSupplicantConf() string {
 	config := "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=US\n"
-	for _, w := range ws.Wifis {
-		config = config + w.GetWifiConfig()
+	for _, w := range ws.List {
+		config = config + w.String()
 	}
 	return config
 }
@@ -120,8 +123,18 @@ func ScanNetworks() (map[string]WpaNetwork, error) {
 				}
 			}
 		}
-
 	}
-
 	return wpaNetworks, nil
+}
+
+// ParseViperWifi parses the wifis from viper
+func (ws *Wifis) ParseViperWifi() {
+	if viper.IsSet("wifis") {
+		err := viper.UnmarshalKey("wifis", &ws.List)
+		if err != nil {
+			fmt.Println("Error unmarshalling", err)
+		}
+	} else {
+		ws.List = nil
+	}
 }
