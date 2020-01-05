@@ -1,6 +1,6 @@
 programname = zerostick
 
-.PHONY: clean build run
+.PHONY: clean build run test
 
 default: zerostick
 
@@ -59,8 +59,24 @@ build_win32: generate certs
 # 	rm ./build/$(programname)
 # 	rm ./build/$(programname).exe
 
+ui:
+	cd ./zerostick_web/ui/; \
+	if [ ! -d node_modules ]; then yarn install; fi ;\
+	rm -rf build ;\
+	yarn build
+
+ui_dev:
+	cd ./zerostick_web/ui; \
+	yarn start
+
+test:
+	PATH="`pwd`/test/mock:$(PATH)" go test -v test/*.go
+
 run: zerostick
 	./$(programname) -d serve
+
+runmock: zerostick
+	PATH="`pwd`/test/mock:$(PATH)" ./$(programname) -d serve
 
 # Development target; Build, push to zerostick.local and restart service
 device: certs
