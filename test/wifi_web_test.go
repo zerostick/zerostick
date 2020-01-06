@@ -77,3 +77,25 @@ func TestWifiAddEntry(t *testing.T) {
 	}
 
 }
+
+func TestWifiDeleteEntry(t *testing.T) {
+	req, err := http.NewRequest("DELETE", "/wifi/flaf", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(zsweb.WifiDeleteEntry)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	// Check the response body is what we expect.
+	expected := ``
+	if rr.Body.String() != expected {
+		t.Errorf("handler returned unexpected body: got %v want %v",
+			rr.Body.String(), expected)
+	}
+}
