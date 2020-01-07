@@ -1,35 +1,63 @@
 {{template "header"}}
-<body>
-<div class="content">
+<div data-role="page" id="main-page">
+
+  <div data-role="header">
+    <h1>Viewing</h1>
+    <a href="#main-page" class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left ui-btn-icon-notext">Back</a>
+    <a href="#configuration-page" class="ui-btn ui-corner-all ui-shadow ui-btn-icon-left ui-icon-gear ui-btn-icon-notext">Button</a>
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#" class="ui-btn-active ui-state-persist">Recent</a></li>
+        <li><a href="#">Saved</a></li>
+        <li><a href="#">Sentry</a></li>
+      </ul>
+    </div>
+  </div><!-- /header -->
+
+  <div class="ui-content" role="main">
 
 
-<div>
- <a href="https://www.tesla.com/model3"><input type="image" src="/assets/img/tesla_model3_black.png" alt="Tesla Model 3" class="responsive"/></a>
-</div>
+  </div><!-- /content -->
 
-</br>
-</br>
+</div><!-- /page -->
 
-<div class="thing">
-  <a href="events"><input type="button" class="button" value="View Events"></a>
-  <a href="config"><input type="button" class="button" value="Configure"></a>
-</div>
+<div data-role="page" id="configuration-page">
 
+  <div data-role="header">
+    <h1>Configuration</h1>
+    <a href="#main-page" class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left ui-btn-icon-notext">Back</a>
+    <a href="#configuration-page" class="ui-btn ui-corner-all ui-shadow ui-btn-icon-left ui-icon-gear ui-btn-icon-notext">Button</a>
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#" id="wifi-navbar" class="ui-btn-active ui-state-persist">WIFI</a></li>
+        <li><a href="#" id="nabto-navbar">Nabto</a></li>
+        <li><a href="#" id="zs-navbar">ZS</a></li>
+      </ul>
+    </div>
+  </div><!-- /header -->
 
-<!-- <form method="POST" enctype="multipart/form-data">
-    <label for="idx-f">Some action</label>
-    <input type="text" id="idx-f" name="test">
-    <br>
-    <input type="submit">
-</form> -->
+  <div class="ui-content" role="main">
+    <div id="wifi-tab" class="configuration-tab">
+      <form>
+        <label for="ssid">SSID:</label>
+        <input type="text" data-clear-btn="true" name="ssid" id="ssid" value="">
+        <label for="password">Password:</label>
+        <input type="text" data-clear-btn="true" name="password" id="password" value="">
+      </form>
+    </div>
+    <div id="nabto-tab" class="configuration-tab">
+      <form>
+        <label for="deviceid">Device Id: </label>
+        <input type="text" data-clear-btn="true" name="deviceid" id="deviceid" value="">
+        <label for="devicekey">Device Key: </label>
+        <input type="text" data-clear-btn="true" name="devicekey" id="devicekey" value="">
+      </form>
+    </div>
+    <div id="zs-tab" class="configuration-tab">
+      ZS configuration?
+    </div>
 
-<p>
-</br>
+  </div><!-- /content -->
 
-
-{{if .}}
-<h1>Here are the contents of the file:</h1>
-{{.}}
-{{end}}
-</body>
+</div><!-- /page -->
 {{template "footer"}}

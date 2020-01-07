@@ -102,3 +102,45 @@ Returns:
 
 ## /events
 ### GET: Get all events metadata
+```bash
+curl "http://localhost:8081/events"
+```
+Returns:
+```json
+{
+    "SavedClips": {
+        "2019-07-22_18-12-23": [
+            {
+                "Id": "682f9be5-63f6-4e65-af90-2b03982dfebe",
+                "Name": "2019-07-22_18-01-55-front-fast.mp4",
+                "ThumbnailFile": "/var/folders/r6/jbkh0zhs65x5s1l43qc7cz940000gn/T/ZeroStick/TeslaCam/SavedClips/2019-07-22_18-12-23/2019-07-22_18-01-55-front-fast.mp4.jpg",
+                "ThumbnailRelPath": "/TeslaCam/SavedClips/2019-07-22_18-12-23/2019-07-22_18-01-55-front-fast.mp4.jpg",
+                "FullPath": "/Users/hilli/TeslaCam/SavedClips/2019-07-22_18-12-23",
+                "Event": "2019-07-22_18-12-23",
+                "EventType": "SavedClips",
+                "EventTime": "2019-07-22T18:01:55Z",
+                "EventCam": "front-fast",
+                "Size": 29368368
+            },
+            {
+                "Id": "d49e9baf-ef9b-4e51-b59e-5c78dd3f82e4",
+                "Name": "2019-07-22_18-01-55-front-ordered.mp4",
+                "ThumbnailFile": "/var/folders/r6/jbkh0zhs65x5s1l43qc7cz940000gn/T/ZeroStick/TeslaCam/SavedClips/2019-07-22_18-12-23/2019-07-22_18-01-55-front-ordered.mp4.jpg",
+                "ThumbnailRelPath": "/TeslaCam/SavedClips/2019-07-22_18-12-23/2019-07-22_18-01-55-front-ordered.mp4.jpg",
+                "FullPath": "/Users/hilli/TeslaCam/SavedClips/2019-07-22_18-12-23",
+                "Event": "2019-07-22_18-12-23",
+                "EventType": "SavedClips",
+                "EventTime": "2019-07-22T18:01:55Z",
+                "EventCam": "front-ordered",
+                "Size": 20399084
+            },
+```
+etc.
+
+## /video/:id
+### GET: Get a video given the Id in streaming friendly format
+```curl
+curl -o TeslaVideo.mp4 http://localhost:8081/video/682f9be5-63f6-4e65-af90-2b03982dfebe
+```
+Returns:
+- A MP4 video file
