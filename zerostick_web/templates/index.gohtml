@@ -1,10 +1,11 @@
 {{template "header"}}
 <div data-role="page" id="main-page">
 
+
   <div data-role="header">
     <h1>Viewing</h1>
-    <a href="#main-page" class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left ui-btn-icon-notext">Back</a>
-    <a href="#configuration-page" class="ui-btn ui-corner-all ui-shadow ui-btn-icon-left ui-icon-gear ui-btn-icon-notext">Button</a>
+    <a href="#main-page" class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left ui-btn-icon-notext">Home</a>
+    <a href="#configuration-page" id="configuration-gear1" class="ui-btn ui-corner-all ui-shadow ui-btn-icon-left ui-icon-gear ui-btn-icon-notext">Configuration</a>
     <div data-role="navbar">
       <ul>
         <li><a href="#" class="ui-btn-active ui-state-persist">Recent</a></li>
@@ -25,8 +26,8 @@
 
   <div data-role="header">
     <h1>Configuration</h1>
-    <a href="#main-page" class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left ui-btn-icon-notext">Back</a>
-    <a href="#configuration-page" class="ui-btn ui-corner-all ui-shadow ui-btn-icon-left ui-icon-gear ui-btn-icon-notext">Button</a>
+    <a href="#main-page" class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left ui-btn-icon-notext">Home</a>
+    <a href="#configuration-page" id="configuration-gear2" class="ui-btn ui-corner-all ui-shadow ui-btn-icon-left ui-icon-gear ui-btn-icon-notext">Configuration</a>
     <div data-role="navbar">
       <ul>
         <li><a href="#" id="wifi-navbar" class="ui-btn-active ui-state-persist">WIFI</a></li>
@@ -35,16 +36,34 @@
       </ul>
     </div>
   </div><!-- /header -->
-
+  
   <div class="ui-content" role="main">
     <div id="wifi-tab" class="configuration-tab">
+      <h1>Configured Access Points</h1>
+      <!-- Popuplated from javascript -->
+      <ul data-role="listview" id="ul_knownwifinetworks">			
+      </ul>
+      <div><br/><br/><a href="#" id="addwifibutton" data-role="button">Add WIFI network</a>
+      </div>
+    </div>
+
+    <div id="wifiaddnetwork-tab" class="configuration-tab">
+      <ul data-role="listview" id="ul_wifinetworks">			
+      </ul>
+      <br/><br/></br>
+      <h3>Network to be added - click above or enter manually</h3>
       <form>
         <label for="ssid">SSID:</label>
         <input type="text" data-clear-btn="true" name="ssid" id="ssid" value="">
         <label for="password">Password:</label>
         <input type="text" data-clear-btn="true" name="password" id="password" value="">
+	<label for="password">Priority:</label>
+	<input type="text" data-clear-btn="true" name="priority" id="priority" value="">
+	</br></br>
+	<input type="button" value="Add WIFI network">
       </form>
     </div>
+    
     <div id="nabto-tab" class="configuration-tab">
       <form>
         <label for="deviceid">Device Id: </label>
@@ -53,6 +72,7 @@
         <input type="text" data-clear-btn="true" name="devicekey" id="devicekey" value="">
       </form>
     </div>
+    
     <div id="zs-tab" class="configuration-tab">
       ZS configuration?
     </div>
