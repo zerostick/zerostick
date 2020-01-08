@@ -1,4 +1,6 @@
-
+/**
+ * Some function that will be called from multiple elements
+ */
 function updateKnownWifiList() {
   $.ajax({                                                                   
     type: "GET",                                                                        
@@ -22,8 +24,6 @@ function updateKnownWifiList() {
   });  
   
 }
-
-
 function updateWifiList() {
   $.ajax({                                                                   
     type: "GET",                                                                        
@@ -48,9 +48,6 @@ function updateWifiList() {
   
 }
 
-
-
-
 $(document).on("pageinit", "#configuration-page", function() {
 
   $(document).on('click',"#configuration-gear2", function () {
@@ -61,13 +58,42 @@ $(document).on("pageinit", "#configuration-page", function() {
     $("#zs-navbar").removeClass("ui-btn-active");
   });
 
-
-  updateWifiList();
-  
+  updateKnownWifiList();
   $(".configuration-tab").hide();
   $("#wifi-tab").show();
-  updateKnownWifiList();
+  
+  $("#addnetworkbutton").on('click',function () {
+    var ssid = $("#ssid").val();
+    var password = $("#password").val();
+    var priority = $("#priority").val();
+    var postdata =  {"ssid": ssid, "password": password,"priority": 3,"use_for_sync": false};
+
+    console.log("JSON: "+JSON.stringify(postdata));
+
+    $.ajax({                                                                   
+      type: 'POST',
+      url: "/wifi",  
+      contentType: 'application/json',
+      data: JSON.stringify(postdata),
+      dataType: 'json',   
+      success: function(data) {
+	updateKnownWifiList();
+	$(".configuration-tab").hide();
+	$("#wifi-tab").show();
+      },                                               
+      error: function(msg) {              
+	alert(msg.statusText + "postdata:"+JSON.stringify(postdata));
+      }
+    });
+    
+  });
+  
+  $("#scannetworkbutton").on('click',function () {
+    updateWifiList();
+  });
+  
   $("#addwifibutton").on('click',function () {
+    updateWifiList();
     $(".configuration-tab").hide();
     $("#wifiaddnetwork-tab").show();
   });
@@ -76,6 +102,7 @@ $(document).on("pageinit", "#configuration-page", function() {
     $(".configuration-tab").hide();
     $("#nabto-tab").show();
   });
+  
   $("#wifi-navbar").on('click', function () {
     $(".configuration-tab").hide();
     updateKnownWifiList();

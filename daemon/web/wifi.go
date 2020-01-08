@@ -28,6 +28,8 @@ func WifiGetEntries(w http.ResponseWriter, r *http.Request) {
 func WifiAddEntry(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var vifi zs.Wifi
+	log.Debugf("request POSTed: %+v", r.Body)
+	log.Debugf("vifi POSTed: %+v", vifi)
 	err := decoder.Decode(&vifi)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError) // "Some problem occurred."

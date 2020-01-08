@@ -43,15 +43,12 @@
       <!-- Popuplated from javascript -->
       <ul data-role="listview" id="ul_knownwifinetworks">			
       </ul>
-      <div><br/><br/><a href="#" id="addwifibutton" data-role="button">Add WIFI network</a>
+      <div><br/><a href="#" id="addwifibutton" data-role="button">Add WIFI network</a>
       </div>
     </div>
 
     <div id="wifiaddnetwork-tab" class="configuration-tab">
-      <ul data-role="listview" id="ul_wifinetworks">			
-      </ul>
-      <br/><br/></br>
-      <h3>Network to be added - click above or enter manually</h3>
+      <h1>Add Network to the list of known networks</h1><h3>Click below on a network in the scanned list or enter data manually</h3>
       <form>
         <label for="ssid">SSID:</label>
         <input type="text" data-clear-btn="true" name="ssid" id="ssid" value="">
@@ -60,8 +57,13 @@
 	<label for="password">Priority:</label>
 	<input type="text" data-clear-btn="true" name="priority" id="priority" value="">
 	</br></br>
-	<input type="button" value="Add WIFI network">
+	<input type="button" id="addnetworkbutton" value="Add WIFI network">
       </form>
+      <h1>WIFI networks visible</h1><a href="#" id="scannetworkbutton" data-icon="refresh" data-role="button">Refresh</a><br/><br/>
+      <ul data-role="listview" id="ul_wifinetworks">			
+      </ul>
+      <br/><br/></br>
+
     </div>
     
     <div id="nabto-tab" class="configuration-tab">
