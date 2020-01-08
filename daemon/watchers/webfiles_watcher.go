@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/zerostick/zerostick/daemon/web"
 	"gopkg.in/fsnotify.v1"
+	"strings"
 )
 
 // WebfilesWatcher will monitor templates dir for changes and reload if any
@@ -27,7 +28,11 @@ func WebfilesWatcher() {
 				// log.Println("FS event:", event)
 				if event.Op&fsnotify.Write == fsnotify.Write {
 					log.Println("FS modified file:", event.Name)
-					web.LoadTemplates()
+					// Ignore temporary files from some editors saving foo.gothtml as .#foo.gohtml
+					if !strings.Contains(event.Name, "/.#") {
+						// Load tempates again
+						web.LoadTemplates()
+					}
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
