@@ -11,11 +11,41 @@ function updateKnownWifiList() {
       var html ='';
       console.log("Got known wifilist:" + JSON.stringify(data));
       $.each(data, function(index, item) {
-        html += '<li><a href="#"><h3>' + item.ssid+ '</h3><p>Priority:'+ item.priority + '</p></a><a href="#" data-icon="delete">Delete</a></li>';
+        html += '<li><a href="#"><h3>' + item.ssid+ '</h3><p>Priority:'+ item.priority + '</p></a><a href="#" class="deleteap" id="' + item.ssid + '" data-icon="delete">Delete</a></li>';
       });
       $('#ul_knownwifinetworks').html($(html));
       $('#ul_knownwifinetworks').trigger('create');    
       $('#ul_knownwifinetworks').listview('refresh');
+      
+      // Handle delete click
+
+      $('.deleteap').click(function(e) {
+	console.log("Item to be deleted:" + $(this).attr('id'));
+	$('#popupDialog').popup("open");
+	$('#wifinetworkpopupid').html('SSID:'+$(this).attr('id'));
+	$('#deletenetwork').data('ssid', $(this).attr('id'));
+	$('#deletenetwork').off('click');
+	$('#deletenetwork').on('click', function() {
+	  var ssid_to_delete = $('#deletenetwork').data('ssid');
+	  $.ajax({                                                                   
+	    type: 'DELETE',
+	    url: "/wifi/"+ssid_to_delete,
+	    dataType: "text",
+	    success: function(data) {
+	      console.log("Deleted");
+	      updateKnownWifiList();
+	    },                                               
+	    error: function(msg) {
+	      // Delete doesn't return a proper json... so always an error
+              console.log("Could no delete");
+	      updateKnownWifiList();
+	    }
+	  });
+	  
+	  
+	});
+
+      });
       
     },                                               
     error: function(msg) {              
@@ -24,6 +54,8 @@ function updateKnownWifiList() {
   });  
   
 }
+
+
 function updateWifiList() {
   $.ajax({                                                                   
     type: "GET",                                                                        
@@ -39,6 +71,7 @@ function updateWifiList() {
       $('#ul_wifinetworks').html($(html));
       $('#ul_wifinetworks').trigger('create');    
       $('#ul_wifinetworks').listview('refresh');
+      
       
     },                                               
     error: function(msg) {              
@@ -94,6 +127,10 @@ $(document).on("pageinit", "#configuration-page", function() {
   
   $("#addwifibutton").on('click',function () {
     updateWifiList();
+    $("#ssid").val('');
+    $("#password").val('');
+    $("#priority").val('');
+    
     $(".configuration-tab").hide();
     $("#wifiaddnetwork-tab").show();
   });
