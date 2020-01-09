@@ -21,7 +21,7 @@ function updateKnownWifiList() {
 
       $('.deleteap').click(function(e) {
 	console.log("Item to be deleted:" + $(this).attr('id'));
-	$('#popupDialog').popup("open");
+	$('#DeletePopupDialog').popup("open");
 	$('#wifinetworkpopupid').html('SSID:'+$(this).attr('id'));
 	$('#deletenetwork').data('ssid', $(this).attr('id'));
 	$('#deletenetwork').off('click');
@@ -66,12 +66,20 @@ function updateWifiList() {
       var html ='';
       console.log("Got wifilist:" + JSON.stringify(data));
       $.each(data, function(index, item) {
-        html += '<li data-icon="plus"><a href="#"><h3>' + item.ssid+ '</h3><p>BSSID:'+ item.bssid + '</p></a></li>';
+        html += '<li data-icon="plus"><a href="#" class="selectap" id="' + item.ssid + '"><h3>' + item.ssid+ '</h3><p>BSSID:'+ item.bssid + '</p></a></li>';
       });
       $('#ul_wifinetworks').html($(html));
       $('#ul_wifinetworks').trigger('create');    
       $('#ul_wifinetworks').listview('refresh');
-      
+      $('.selectap').click(function(e) {
+	var ssid = $(this).attr('id');
+	console.log("Item to be selected:" + ssid);
+	$("#ssid").val(ssid);
+	$(window).scrollTop(0);
+	//$("#ssid").get(0).scrollIntoView();
+
+      });
+
       
     },                                               
     error: function(msg) {              
@@ -94,11 +102,25 @@ $(document).on("pageinit", "#configuration-page", function() {
   updateKnownWifiList();
   $(".configuration-tab").hide();
   $("#wifi-tab").show();
+
+  $("#priority").val('0');
   
   $("#addnetworkbutton").on('click',function () {
     var ssid = $("#ssid").val();
     var password = $("#password").val();
     var priority = $("#priority").val();
+    if(ssid == "") {
+      $('#EmptySSIDPopupDialog h3').html("Cannot add mpty SSID");
+      $('#EmptySSIDPopupDialog').popup("open");
+      console.log("Cannot add empty ssid");
+      return;
+    }
+    if(priority == "") {
+      $('#EmptySSIDPopupDialog h3').html("Cannot add empty Priority");
+      $('#EmptySSIDPopupDialog').popup("open");
+      console.log("Cannot add empty priority");
+      return;
+    }
     var postdata =  {"ssid": ssid, "password": password,"priority": 3,"use_for_sync": false};
 
     console.log("JSON: "+JSON.stringify(postdata));
@@ -129,7 +151,7 @@ $(document).on("pageinit", "#configuration-page", function() {
     updateWifiList();
     $("#ssid").val('');
     $("#password").val('');
-    $("#priority").val('');
+    $("#priority").val('0');
     
     $(".configuration-tab").hide();
     $("#wifiaddnetwork-tab").show();
