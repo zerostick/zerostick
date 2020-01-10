@@ -39,7 +39,7 @@
   
   <div class="ui-content" role="main">
     <div id="wifi-tab" class="configuration-tab">
-      <h1>Configured Access Points</h1>
+      <h2>Configured Access Points</h2>
       <!-- Popuplated from javascript -->
       <ul data-role="listview" id="ul_knownwifinetworks">			
       </ul>
@@ -49,7 +49,7 @@
 
     <div data-role="popup" id="DeletePopupDialog" style="max-width:400px;">
       <div data-role="header">
-	<h1>Delete network?</h1>
+	<h2>Delete network?</h2>
       </div>
       <div role="main" class="ui-content">
 	<h3 id="wifinetworkpopupid"></h3>
@@ -61,7 +61,7 @@
     
     
     <div id="wifiaddnetwork-tab" class="configuration-tab">
-      <h1>Add Network to the list of known networks</h1><h3>Click below on a network in the scanned list or enter data manually</h3>
+      <h2>Add Network to the list of known networks</h2><h5>Click below on a network in the scanned list or enter data manually</h5>
       <form>
         <label for="ssid">SSID:</label>
         <input type="text" data-clear-btn="true" name="ssid" id="ssid" value="">
@@ -80,7 +80,7 @@
       </div>
 
       
-      <h1>WIFI networks visible</h1><a href="#" id="scannetworkbutton" data-icon="refresh" data-role="button">Refresh</a><br/><br/>
+      <h2>WIFI networks visible</h2><a href="#" id="scannetworkbutton" data-icon="refresh" data-role="button">Refresh</a><br/><br/>
       <ul data-role="listview" id="ul_wifinetworks">			
       </ul>
       <br/><br/></br>
@@ -88,19 +88,40 @@
     </div>
     
     <div id="nabto-tab" class="configuration-tab">
+      <h2>Nabto configuration</h2>
       <form>
         <label for="deviceid">Device Id: </label>
         <input type="text" data-clear-btn="true" name="deviceid" id="deviceid" value="">
         <label for="devicekey">Device Key: </label>
         <input type="text" data-clear-btn="true" name="devicekey" id="devicekey" value="">
+	<br/>
+	<input type="button" id="updatenabtobutton" value="Update">
       </form>
+      <br/>
+      <h2>Clear Access Control List (ACL)</h2>
+      <p>Click this if you want to clear and restart pairing of useraccess.</p>
+      <a href="#ClearACLDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow">Clear ACL</a>
+      <div data-role="popup" id="ClearACLDialog" style="max-width:400px;">
+	<div data-role="header">
+	  <h2>Clear ACL?</h2>
+	</div>
+	<div role="main" class="ui-content">
+	  <h5 class="ui-title">Are you sure you want to clear?</h5>
+	  <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+	  <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="ClearACLButton" data-rel="back" data-transition="flow">Clear</a>
+	</div>
+      </div>
+	
+	
     </div>
-    
+      
+      
+      
     <div id="zs-tab" class="configuration-tab">
       ZS configuration?
     </div>
-
+    
   </div><!-- /content -->
-
+  
 </div><!-- /page -->
 {{template "footer"}}

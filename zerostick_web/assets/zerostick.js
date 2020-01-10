@@ -89,6 +89,30 @@ function updateWifiList() {
   
 }
 
+
+function updateNabto() {
+  $.ajax({                                                                   
+    type: "GET",                                                                        
+    url: "/nabto",  
+    contentType: "application/json; charset=utf-8",                                                            
+    dataType: "json",   
+    success: function(data) {
+
+      console.log("Got nabto config:" + JSON.stringify(data));
+      $("#deviceid").val(data);
+      $("#devicekey").val("");
+      
+    },                                               
+    error: function(msg) {              
+      alert(msg.statusText);
+    } 
+  });  
+  
+}
+
+
+
+
 $(document).on("pageinit", "#configuration-page", function() {
 
   $(document).on('click',"#configuration-gear2", function () {
@@ -142,7 +166,52 @@ $(document).on("pageinit", "#configuration-page", function() {
     });
     
   });
+
   
+
+  $("#updatenabtobutton").on('click',function () {
+    var deviceid = $("#deviceid").val();
+    var devicekey = $("#devicekey").val();
+
+    var postdata =  {"deviceid": deviceid, "devicekey": devicekey};
+
+    console.log("JSON: "+JSON.stringify(postdata));
+
+    $.ajax({                                                                   
+      type: 'POST',
+      url: "/nabto",  
+      contentType: 'application/json',
+      data: JSON.stringify(postdata),
+      dataType: 'json',   
+      success: function(data) {
+	updateNabto();
+	$(".configuration-tab").hide();
+	$("#nabto-tab").show();
+      },                                               
+      error: function(msg) {              
+	alert(msg.statusText + "postdata:"+JSON.stringify(postdata));
+      }
+    });
+    
+  });
+
+  $("#ClearACLButton").on('click',function () {
+    
+    $.ajax({                                                                   
+      type: 'DELETE',
+      url: "/nabto/delete_acl",  
+      success: function(data) {
+	console.log("called clear");
+      },                                               
+      error: function(msg) {              
+	console.log("called clear.. with error");
+      }
+    });
+    
+  });
+
+
+    
   $("#scannetworkbutton").on('click',function () {
     updateWifiList();
   });
@@ -160,6 +229,7 @@ $(document).on("pageinit", "#configuration-page", function() {
   $("#nabto-navbar").on('click', function () {
     $(".configuration-tab").hide();
     $("#nabto-tab").show();
+    updateNabto();
   });
   
   $("#wifi-navbar").on('click', function () {
