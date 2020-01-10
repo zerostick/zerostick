@@ -9,14 +9,14 @@ import (
 )
 
 // NabtoDeviceID returns the Nabto ID
-func NabtoDeviceID(w http.ResponseWriter, r *http.Request) {
+func NabtoConfig(w http.ResponseWriter, r *http.Request) {
 	nc := &zs.NabtoClient{}
 	if viper.IsSet("nabto") {
 		_ = viper.UnmarshalKey("nabto", nc)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	response, _ := json.Marshal(nc.DeviceId) // Return DeviceID only
+	response, _ := json.Marshal(nc)
 	w.Write(response)
 }
 
@@ -34,7 +34,6 @@ func NabtoSetup(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	response, _ := json.Marshal(nc)
 	w.Write(response)
-
 }
 
 // NabtoDeleteACL handle /nabto/delete_acl
@@ -43,4 +42,5 @@ func NabtoDeleteACL(w http.ResponseWriter, r *http.Request) {
 	nc.DeleteACL()
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("{}"))
 }

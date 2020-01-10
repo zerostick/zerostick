@@ -66,7 +66,7 @@ func Start() {
 	r.PathPrefix("/wifi/{id}").HandlerFunc(WifiDeleteEntry).Name("Wifi Delete").Methods("DELETE")
 
 	// Nabto
-	r.PathPrefix("/nabto").HandlerFunc(NabtoDeviceID).Name("Nabto Get").Methods("GET")
+	r.PathPrefix("/nabto").HandlerFunc(NabtoConfig).Name("Nabto Get").Methods("GET")
 	r.PathPrefix("/nabto").HandlerFunc(NabtoSetup).Name("Nabto Post").Methods("POST")
 	r.PathPrefix("/nabto").HandlerFunc(NabtoDeleteACL).Name("Nabto delete saved creds").Methods("DELETE")
 

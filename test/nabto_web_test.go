@@ -16,7 +16,7 @@ func TestNabtoGetDeviceIDEmpty(t *testing.T) {
 		t.Fatal(err)
 	}
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(zsweb.NabtoDeviceID)
+	handler := http.HandlerFunc(zsweb.NabtoConfig)
 	handler.ServeHTTP(rr, req)
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
@@ -24,7 +24,7 @@ func TestNabtoGetDeviceIDEmpty(t *testing.T) {
 	}
 
 	// Check the response body is what we expect.
-	expected := `""`
+	expected := `{"deviceid":"","devicekey":""}`
 	if rr.Body.String() != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), expected)
@@ -56,13 +56,13 @@ func TestNabtoSetup(t *testing.T) {
 	}
 }
 
-func TestNabtoGetDeviceID(t *testing.T) {
+func TestNabtoGetConfig(t *testing.T) {
 	req, err := http.NewRequest("GET", "/nabto", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(zsweb.NabtoDeviceID)
+	handler := http.HandlerFunc(zsweb.NabtoConfig)
 	handler.ServeHTTP(rr, req)
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
@@ -70,7 +70,7 @@ func TestNabtoGetDeviceID(t *testing.T) {
 	}
 
 	// Check the response body is what we expect.
-	expected := `"devid"`
+	expected := `{"deviceid":"devid","devicekey":"nabtokey"}`
 	if rr.Body.String() != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), expected)
