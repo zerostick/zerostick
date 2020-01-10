@@ -2,7 +2,6 @@ package web
 
 import (
 	"encoding/json"
-
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -56,6 +55,5 @@ func WifiDeleteEntry(w http.ResponseWriter, r *http.Request) {
 	ws.DeleteWifiFromList(id)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	// response, _ := json.Marshal(vifi)
-	// w.Write(response)
+	w.Write([]byte("{}"))
 }

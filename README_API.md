@@ -98,7 +98,9 @@ Returns:
 curl -X DELETE "http://localhost:8081/nabto/delete_acl"
 ```
 Returns:
-*Nothing*
+```
+{}
+```
 
 ## /events
 ### GET: Get all events metadata
