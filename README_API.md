@@ -76,7 +76,10 @@ curl "http://localhost:8081/nabto"
 ```
 Return:
 ```json
-"devid"
+{
+    "deviceid": "devid",
+    "devicekey": "nabtokey"
+}
 ```
 
 ### POST: Save deviceID and key
@@ -88,7 +91,10 @@ curl -v -d '{
 ```
 Returns:
 ```json
-{"deviceid":"devid","devicekey":"nabtokey"}
+{
+    "deviceid": "devid",
+    "devicekey":"nabtokey"
+}
 ```
 
 
