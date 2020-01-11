@@ -17,16 +17,16 @@ import (
 
 // VideoFile has the metainfomation on each mp4
 type VideoFile struct {
-	Id               string // Generated UUID
-	Name             string
-	ThumbnailFile    string
-	ThumbnailRelPath string
-	FullPath         string
-	Event            string
-	EventType        string
-	EventTime        time.Time
-	EventCam         string
-	Size             int64
+	Id               string    `json:"id"` // Generated UUID
+	Name             string    `json:"filename"`
+	ThumbnailFile    string    `json:"-"`
+	ThumbnailRelPath string    `json:"thumbnail_path"`
+	FullPath         string    `json:"-"`
+	Event            string    `json:"event"`
+	EventType        string    `json:"-"`
+	EventTime        time.Time `json:"file_time"`
+	EventCam         string    `json:"camera"`
+	Size             int64     `json:"file_size"`
 }
 
 // CamFS holds all files
@@ -70,7 +70,6 @@ func (cfs CamFS) EventsSorted() map[string]map[string][]VideoFile {
 		}
 		r[cfs.VideoFiles[i].EventType][cfs.VideoFiles[i].Event] = append(vf, cfs.VideoFiles[i])
 	}
-	log.Debug(r)
 	return r
 }
 
@@ -102,7 +101,7 @@ func ScanCamFS(camfspath string) {
 }
 
 func indexFile(camfspath string, f os.FileInfo) {
-	log.Debugln("New file added: ", camfspath, f.Name())
+	// log.Debugln("New file added: ", camfspath, f.Name())
 	camFSDir := camfspath[len(viper.GetString("cam-root")):] // Cut cam root off
 	// Create shadow FS for thumbnails
 	os.MkdirAll(filepath.Join(ShadowCamFSPath, camFSDir), 0755)
@@ -110,7 +109,7 @@ func indexFile(camfspath string, f os.FileInfo) {
 	var v VideoFile
 	if f.Size() < 1000 {
 		log.Warn("Ignoring ", f.Name(), "(", f.Size(), " bytes)")
-	} else { // File is not corrupted
+	} else { // File is not corrupted or just a mp4 header
 		if f.Name()[len(f.Name())-4:] == ".mp4" { // If extension matches .mp4
 			v.Id = guuid.New().String()
 			v.Name = f.Name()
@@ -159,24 +158,44 @@ func GenerateCoverImage(videoFile string, outFile string, imageWidth ...int) err
 func parseFileDetails(path string, videoFile *VideoFile) {
 	// Paths has <something>/TeslaCam/SavedClips/2019-08-01_17-55-02/2019-08-01_17-56-02-front.mp4 format
 	timeFormat := "2006-01-02_15-04-05" // https://stackoverflow.com/a/14106561/10334686
-	rgxp := regexp.MustCompile(`/TeslaCam/((?P<EventType>.*)/(?P<Event>\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})/)?(?P<ClipTime>\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})-(?P<ClipCamera>.*).mp4$`)
+
+	// Handle Sentry and Saved clips
+	rgxp := regexp.MustCompile(`/TeslaCam/(?P<EventType>.*)/(?P<Event>\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})/(?P<ClipTime>\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})-(?P<ClipCamera>.*).mp4$`)
 	matches := rgxp.FindStringSubmatch(path)
 	subnames := rgxp.SubexpNames()
-	if len(matches) == 0 {
-		return
-	}
+
+	// Handle RecentClips that is not filed into subdirectoeies by event
+	rgxpRecent := regexp.MustCompile(`/TeslaCam/RecentClips/(?P<ClipTime>\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})-(?P<ClipCamera>.*).mp4$`)
+	matchesRecent := rgxpRecent.FindStringSubmatch(path)
+	subnamesRecent := rgxpRecent.SubexpNames()
+
 	// Copy matches to map
 	r := make(map[string]string)
-	for i, v := range subnames {
-		if i == 0 {
-			continue
+	switch {
+	case len(matches) > 0:
+		for i, v := range subnames {
+			if i == 0 {
+				continue
+			}
+			r[v] = matches[i]
 		}
-		r[v] = matches[i]
+		videoFile.EventTime, _ = time.Parse(timeFormat, r["ClipTime"])
+		videoFile.EventType = r["EventType"]
+		videoFile.Event = r["Event"]
+		videoFile.EventCam = r["ClipCamera"]
+
+	case len(matchesRecent) > 0:
+		for i, v := range subnamesRecent {
+			if i == 0 {
+				continue
+			}
+			r[v] = matchesRecent[i]
+		}
+		videoFile.EventTime, _ = time.Parse(timeFormat, r["ClipTime"])
+		videoFile.EventType = "RecentClips"
+		videoFile.Event = "None"
+		videoFile.EventCam = r["ClipCamera"]
 	}
-	videoFile.Event = r["Event"]
-	videoFile.EventType = r["EventType"]
-	videoFile.EventTime, _ = time.Parse(timeFormat, r["ClipTime"])
-	videoFile.EventCam = r["ClipCamera"]
 }
 
 // This is a function to execute a system command and return output

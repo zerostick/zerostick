@@ -53,7 +53,7 @@ func Start() {
 	r.HandleFunc("/post/config", OnPostConfigEvent)
 
 	// events saved
-	r.HandleFunc("/events", EventsHandler).Methods("GET")
+	r.PathPrefix("/events/{type}").HandlerFunc(EventsHandler).Methods("GET")
 
 	// send a video
 	r.HandleFunc("/video/{id}", sendVideo).Name("videoRoute")
