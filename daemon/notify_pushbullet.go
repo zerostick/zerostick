@@ -10,8 +10,8 @@ import (
 
 // PushbulletClient has the struct for the pushbullet config
 type PushbulletClient struct {
-	APIKey  string `json:"api_key"`
-	Enabled bool   `json:"enabled"`
+	AccessToken string `json:"access_token"`
+	Enabled     bool   `json:"enabled"`
 }
 
 var viperPushbulletConfName string = "pushbullet"
@@ -35,7 +35,7 @@ func (pb *PushbulletClient) LoadConfig() {
 
 // SendMessage sends a message via PushBullet
 func (pb *PushbulletClient) SendMessage(message string) {
-	pbc := pushbullet.New(pb.APIKey)
+	pbc := pushbullet.New(pb.AccessToken)
 	devs, err := pbc.Devices()
 	if err != nil {
 		log.Warn(err)

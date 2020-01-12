@@ -24,7 +24,7 @@ func TestPushbulletGetEmptyWeb(t *testing.T) {
 	}
 
 	// Check the response body is what we expect.
-	expected := `{"api_key":"","enabled":false}`
+	expected := `{"access_token":"","enabled":false}`
 	if rr.Body.String() != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), expected)
@@ -32,7 +32,7 @@ func TestPushbulletGetEmptyWeb(t *testing.T) {
 }
 
 func TestPushbulletConfigSet(t *testing.T) {
-	var jsonStr = []byte(`{"api_key":"testkey","enabled":true}`)
+	var jsonStr = []byte(`{"access_token":"testkey","enabled":true}`)
 
 	req, err := http.NewRequest("POST", "/notifications/provider/pushbullet", bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -47,7 +47,7 @@ func TestPushbulletConfigSet(t *testing.T) {
 			status, http.StatusOK)
 	}
 	// Check the response body is what we expect.
-	expected := `{"api_key":"testkey","enabled":true}`
+	expected := `{"access_token":"testkey","enabled":true}`
 	if rr.Body.String() != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), expected)
@@ -68,7 +68,7 @@ func TestPushbulletGetWeb(t *testing.T) {
 	}
 
 	// Check the response body is what we expect.
-	expected := `{"api_key":"testkey","enabled":true}`
+	expected := `{"access_token":"testkey","enabled":true}`
 	if rr.Body.String() != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), expected)

@@ -153,7 +153,7 @@ Returns:
 ```json
 {
    "enabled" : true,
-   "api_key" : "pushbulletAPIkey"
+   "access_token" : "pushbulletAccessToken"
 }
 ```
 
@@ -161,7 +161,7 @@ Returns:
 
 ```bash
 curl -d '{
-    "api_key": "pushbulletAPIkey",
+    "access_token": "pushbulletAccessToken",
     "enabled": true
 }' -H "Content-Type: application/json" "http://localhost:8081/notifications/provider/pushbullet"
 ```
@@ -171,7 +171,7 @@ Returns:
 ```json
 {
    "enabled" : true,
-   "api_key" : "pushbulletAPIkey"
+   "access_token" : "pushbulletAccessToken"
 }
 ```
 
