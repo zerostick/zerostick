@@ -187,6 +187,56 @@ Returns:
 {}
 ```
 
+## /notifications/provider/pushover
+
+### GET: Get the Pushover config
+
+```bash
+curl "http://localhost:8081/notifications/provider/pushover"
+```
+
+Returns:
+
+```json
+{
+   "user_key" : "",
+   "app_key" : "",
+   "enabled" : false
+}
+```
+
+### POST: Get the Pushover config
+
+```bash
+curl -d '{
+   "user_key" : "testuserkey",
+   "app_key" : "testappkey",
+   "enabled" : true
+}' -H "Content-Type: application/json" "http://localhost:8081/notifications/provider/pushover"
+```
+
+Returns:
+
+```json
+{
+   "app_key" : "testappkey",
+   "user_key" : "testuserkey",
+   "enabled" : true
+}
+```
+
+### DELETE: Deletes the Pushover config
+
+```bash
+curl -X DELETE "http://localhost:8081/notifications/provider/pushover"
+```
+
+Returns:
+
+```json
+{}
+```
+
 ## /events/:type
 
 ### GET: Get all events metadata

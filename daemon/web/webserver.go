@@ -71,9 +71,14 @@ func Start() {
 	r.PathPrefix("/nabto").HandlerFunc(NabtoDeleteACL).Name("Nabto delete saved creds").Methods("DELETE")
 
 	// Notifications
+	// - Pushbullet
 	r.PathPrefix("/notifications/provider/pushbullet").HandlerFunc(NotificationPushbulletConfig).Name("Pushbullet config Get").Methods("GET")
 	r.PathPrefix("/notifications/provider/pushbullet").HandlerFunc(NotificationPushbulletConfigSet).Name("Pushbullet config Set").Methods("POST")
 	r.PathPrefix("/notifications/provider/pushbullet").HandlerFunc(NotificationPushbulletConfigDelete).Name("Pushbullet config Delete").Methods("DELETE")
+	// - Pushover
+	r.PathPrefix("/notifications/provider/pushover").HandlerFunc(NotificationPushoverConfig).Name("Pushover config Get").Methods("GET")
+	r.PathPrefix("/notifications/provider/pushover").HandlerFunc(NotificationPushoverConfigSet).Name("Pushover config Set").Methods("POST")
+	r.PathPrefix("/notifications/provider/pushover").HandlerFunc(NotificationPushoverConfigDelete).Name("Pushover config Delete").Methods("DELETE")
 
 	// Serve assets
 	fs := http.FileServer(http.Dir(viper.GetString("assetsRoot")))

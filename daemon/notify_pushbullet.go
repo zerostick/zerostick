@@ -1,9 +1,9 @@
 package zerostick
 
 import (
-	"github.com/xconstruct/go-pushbullet"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/xconstruct/go-pushbullet"
 )
 
 // Pushbullet configuration
@@ -41,7 +41,7 @@ func (pb *PushbulletClient) SendMessage(message string) {
 		log.Warn(err)
 	}
 	var title string = "" // Empty title shows full message on a device.
-    err = pbc.PushNote(devs[0].Iden, title, message)
+	err = pbc.PushNote(devs[0].Iden, title, message)
 
 	if err != nil {
 		log.Warn(err)
@@ -50,5 +50,5 @@ func (pb *PushbulletClient) SendMessage(message string) {
 
 // DeleteConfig the PushBullet Config
 func (pb *PushbulletClient) DeleteConfig() {
-	viper.Set("pushbullet", nil)
+	viper.Set(viperPushbulletConfName, nil)
 }
