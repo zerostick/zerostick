@@ -8,7 +8,7 @@ import (
 	zs "github.com/zerostick/zerostick/daemon"
 )
 
-// NabtoDeviceID returns the Nabto ID
+// NabtoConfig returns the Nabto ID
 func NabtoConfig(w http.ResponseWriter, r *http.Request) {
 	nc := &zs.NabtoClient{}
 	if viper.IsSet("nabto") {

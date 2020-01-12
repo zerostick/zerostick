@@ -1,8 +1,15 @@
-# API Endpoints:
+# API Endpoints
 
 ## /wifilist
+
 ### GET: List of scanned SSIDs
+
+```bash
+curl http://localhost:8081/wifilist
+```
+
 Returns:
+
 ```json
 {
     "AirExtreme": {
@@ -23,12 +30,15 @@ Returns:
 ```
 
 ## /wifi/
+
 ### GET: SSID/SSIDs known
+
 ```bash
 curl http://localhost:8081/wifi
 ```
 
 Returns:
+
 ```json
 [
     {
@@ -47,6 +57,7 @@ Returns:
 ```
 
 ### POST: Add/update SSID
+
 ```bash
 curl -d '{
     "ssid": "flaf22",
@@ -54,27 +65,42 @@ curl -d '{
     "priority": 22,
     "use_for_sync": false
 }' -H "Content-Type: application/json" "http://localhost:8081/wifi"
+
 ```
 
 Returns:
+
 ```json
-{"ssid":"flaf22","encrypted_password":"9816f2e2f268fd66b600e58ae5a3ce02cdfff0aaa57750e918e77e772fb0871a","priority":22,"use_for_sync":false}
+{
+   "encrypted_password" : "9816f2e2f268fd66b600e58ae5a3ce02cdfff0aaa57750e918e77e772fb0871a",
+   "ssid" : "flaf22",
+   "use_for_sync" : false,
+   "priority" : 22
+}
 ```
 
 ### DELETE: Deletes /wifi/:id
+
 ```bash
 curl -X DELETE http://localhost:8081/wifi/flaf22
 ```
 
 Returns:
-*Nothing*
+
+```json
+{}
+```
 
 ## /nabto/
+
 ### GET: Get DeviceID
+
 ```bash
 curl "http://localhost:8081/nabto"
 ```
+
 Return:
+
 ```json
 {
     "deviceid": "devid",
@@ -83,13 +109,16 @@ Return:
 ```
 
 ### POST: Save deviceID and key
+
 ```bash
-curl -v -d '{ 
-    "deviceid": "devid", 
+curl -v -d '{
+    "deviceid": "devid",
     "devicekey": "nabtokey"
 }' -H "Content-Type: application/json" "http://localhost:8081/nabto"
 ```
+
 Returns:
+
 ```json
 {
     "deviceid": "devid",
@@ -97,25 +126,79 @@ Returns:
 }
 ```
 
-
 ## /nabto/delete_acl
+
 ### DELETE: Deletes Nabto ACL file
+
 ```bash
 curl -X DELETE "http://localhost:8081/nabto/delete_acl"
 ```
+
 Returns:
+
+```json
+{}
 ```
+
+## /notifications/provider/pushbullet
+
+### GET: Get the Pushbullet config
+
+```bash
+curl "http://localhost:8081/notifications/provider/pushbullet"
+```
+
+Returns:
+
+```json
+{
+   "enabled" : true,
+   "api_key" : "pushbulletAPIkey"
+}
+```
+
+### POST: Get the Pushbullet config
+
+```bash
+curl -d '{
+    "api_key": "pushbulletAPIkey",
+    "enabled": true
+}' -H "Content-Type: application/json" "http://localhost:8081/notifications/provider/pushbullet"
+```
+
+Returns:
+
+```json
+{
+   "enabled" : true,
+   "api_key" : "pushbulletAPIkey"
+}
+```
+
+### DELETE: Deletes the Pushbullet config
+
+```bash
+curl -X DELETE "http://localhost:8081/notifications/provider/pushbullet"
+```
+
+Returns:
+
+```json
 {}
 ```
 
 ## /events/:type
+
 ### GET: Get all events metadata
+
 Type is usualy one of "RecentClips", "SavedClips" and "SentryClips".
 
 ```bash
 curl "http://localhost:8081/events/SavedClips"
 ```
+
 Returns:
+
 ```json
 {
    "2019-07-23_17-22-24" : [
@@ -138,12 +221,17 @@ Returns:
          "id" : "e1c7fdcc-6f62-4a9f-be67-c5bb568b2afc"
       },
 ```
+
 etc.
 
 ## /video/:id
-### GET: Get a video given the Id in streaming friendly format
+
+### GET: Get a video, given the id, in streaming friendly format
+
 ```curl
 curl -o TeslaVideo.mp4 http://localhost:8081/video/481543f3-8afe-4b4f-ad5b-642dae1c2f03
 ```
+
 Returns:
-- A MP4 video file
+
+- A MP4 video file byte steam

@@ -4,8 +4,9 @@ import "github.com/spf13/viper"
 
 // Nabto Setup stuff
 
+// NabtoClient has Nabto config
 type NabtoClient struct {
-	DeviceId  string `json:"deviceid"`
+	DeviceID  string `json:"deviceid"`
 	DeviceKey string `json:"devicekey"`
 }
 

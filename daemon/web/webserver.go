@@ -70,6 +70,11 @@ func Start() {
 	r.PathPrefix("/nabto").HandlerFunc(NabtoSetup).Name("Nabto Post").Methods("POST")
 	r.PathPrefix("/nabto").HandlerFunc(NabtoDeleteACL).Name("Nabto delete saved creds").Methods("DELETE")
 
+	// Notifications
+	r.PathPrefix("/notifications/provider/pushbullet").HandlerFunc(NotificationPushbulletConfig).Name("Pushbullet config Get").Methods("GET")
+	r.PathPrefix("/notifications/provider/pushbullet").HandlerFunc(NotificationPushbulletConfigSet).Name("Pushbullet config Set").Methods("POST")
+	r.PathPrefix("/notifications/provider/pushbullet").HandlerFunc(NotificationPushbulletConfigDelete).Name("Pushbullet config Delete").Methods("DELETE")
+
 	// Serve assets
 	fs := http.FileServer(http.Dir(viper.GetString("assetsRoot")))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
