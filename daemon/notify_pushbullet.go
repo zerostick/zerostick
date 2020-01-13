@@ -35,6 +35,9 @@ func (pb *PushbulletClient) LoadConfig() {
 
 // SendMessage sends a message via PushBullet
 func (pb *PushbulletClient) SendMessage(message string) {
+	if !pb.Enabled {
+		return
+	}
 	pbc := pushbullet.New(pb.AccessToken)
 	devs, err := pbc.Devices()
 	if err != nil {

@@ -38,6 +38,9 @@ func (po *PushoverClient) LoadConfig() {
 
 // SendMessage sends a message via PushBullet
 func (po *PushoverClient) SendMessage(message string) {
+	if !po.Enabled {
+		return
+	}
 	app := pushover.New(po.AppKey)
 	recipient := pushover.NewRecipient(po.UserKey)
 	poMessage := pushover.NewMessage(message)
@@ -50,6 +53,9 @@ func (po *PushoverClient) SendMessage(message string) {
 
 // SendMessageWithImage sends a message via PushBullet with a image attached
 func (po *PushoverClient) SendMessageWithImage(message, imagePath string) {
+	if !po.Enabled {
+		return
+	}
 	app := pushover.New(po.AppKey)
 	recipient := pushover.NewRecipient(po.UserKey)
 	poMessage := pushover.NewMessage(message)
