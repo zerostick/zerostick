@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"sync"
 	"time"
 
 	guuid "github.com/google/uuid"
@@ -32,6 +33,7 @@ type VideoFile struct {
 // CamFS holds all files
 type CamFS struct {
 	VideoFiles []VideoFile
+	mutex      sync.Mutex
 }
 
 var (
@@ -75,6 +77,8 @@ func (cfs CamFS) EventsSorted() map[string]map[string][]VideoFile {
 
 // HandleCamEvents will update the shadow web
 func HandleCamEvents(filename string) {
+	CamStructure.mutex.Lock()
+	defer CamStructure.mutex.Unlock()
 	f, err := os.Stat(filename) // Get os.FileInfo
 	if err != nil {             // Removed file
 		CamStructure.remove(filename)
