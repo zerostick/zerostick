@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "type": "shell",
+    "tasks": [
+        {
+            "label": "Compile",
+            "group": "build",
+            "command": "go",
+            "args": [ "build" ],
+            "problemMatcher": [ "$go" ]
+        },
+        {
+            "label": "Run ZeroStick in Debug mode",
+            "group": "build",
+            "command": "make",
+            "args": [ "run" ],
+            "problemMatcher": ["$go"]
+        },
+        {
+            "label": "Test",
+            "group": "build",
+            "command": "make",
+            "args": [ "test" ],
+            "problemMatcher": [ "$go" ]
+        }
+    ]
+}
