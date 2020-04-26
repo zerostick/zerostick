@@ -55,6 +55,10 @@ build_win32: generate certs
 	GOOS=windows GOARCH=386 go build -tags=deploy_build -a -o ./build/bin/$(programname).exe *.go
 	#zip ./build/$(programname)_win32.zip ./build/$(programname).exe
 
+for_snap: generate certs
+	GOOS=linux GOARM=7 GOARCH=arm go build -tags=deploy_build -a -o ./$(programname) *.go
+
+
 # all: build_darwin build_linux build_arm6 build_arm7 build_win64 build_win32
 # 	rm ./build/$(programname)
 # 	rm ./build/$(programname).exe
