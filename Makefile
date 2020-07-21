@@ -1,6 +1,6 @@
 programname = zerostick
 
-.PHONY: clean build run
+.PHONY: clean build run test
 
 default: zerostick
 
@@ -58,6 +58,19 @@ build_win32: generate certs
 # all: build_darwin build_linux build_arm6 build_arm7 build_win64 build_win32
 # 	rm ./build/$(programname)
 # 	rm ./build/$(programname).exe
+
+ui:
+	cd ./zerostick_web/ui/; \
+	if [ ! -d node_modules ]; then yarn install; fi ;\
+	rm -rf build ;\
+	yarn build
+
+ui_dev:
+	cd ./zerostick_web/ui; \
+	yarn start
+
+test:
+	go test -v test/*
 
 run: zerostick
 	./$(programname) -d serve
