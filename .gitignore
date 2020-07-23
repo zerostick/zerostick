@@ -12,3 +12,4 @@ src/assets/assets_vfsdata.go
 src/templates/templates_vfsdata.go
 *.img
 *.zip
+*.snap
