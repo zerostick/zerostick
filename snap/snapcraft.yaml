@@ -1,0 +1,42 @@
+name: zerostick
+version: git
+summary: ZeroStick, the zero effort TeslaCam controller
+description: Help you remote monitor your Tesla with a Raspberry Pi 4
+architectures: # https://snapcraft.io/docs/architectures
+  - build-on: arm64
+    run-on: arm64
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+base: core20
+
+parts:
+  zerostick-binary:
+    source: .
+    plugin: go
+    source-type: git
+    build-packages:
+      - gcc
+      - build-essential
+  zerostick-web:
+    plugin: dump
+    source: .
+    organize:
+      zerostick-web: bin/
+
+plugs:
+  zerostick-fs:
+    interface: system-files # https://snapcraft.io/docs/system-files-interface
+    write:
+      - /etc/wpa_supplicant.conf
+
+apps:
+  zerostick:
+    command: bin/zerostick
+    daemon: simple # https://snapcraft.io/docs/services-and-daemons
+    restart-delay: 10s
+    plugs:
+      - network-bind
+      - network
+      - network-observe
+      - zerostick-fs
