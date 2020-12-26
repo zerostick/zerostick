@@ -65,13 +65,13 @@ for_snap: generate certs
 
 ui:
 	cd ./zerostick_web/ui/; \
-	if [ ! -d node_modules ]; then yarn install; fi ;\
-	rm -rf build ;\
-	yarn build
+	if [ ! -d node_modules ]; then npm ci; fi ;\
+	rm -rf public/build ;\
+	npm run build
 
 ui_dev:
 	cd ./zerostick_web/ui; \
-	yarn start
+	npm run dev
 
 test:
 	PATH="`pwd`/test/mock:$(PATH)" go test -v test/*.go
@@ -91,6 +91,7 @@ device: certs
 
 clean:
 	- rm -rf build
+	- rm -rf zerostick_web/ui/public/build
 	- rm -f zerostick
 	- docker rm -v pigen_work || true
 
