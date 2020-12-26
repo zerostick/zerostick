@@ -1,5 +1,9 @@
 #!/bin/bash
 
+realpath() {
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+}
+
 BASEPATH=$(realpath $(dirname $0)/..)
 
 mkdir -p ${BASEPATH}/zerostick_web/certs
