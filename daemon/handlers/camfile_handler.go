@@ -18,7 +18,7 @@ import (
 
 // VideoFile has the metainfomation on each mp4
 type VideoFile struct {
-	Id               string    `json:"id"` // Generated UUID
+	ID               string    `json:"id"` // Generated UUID
 	Name             string    `json:"filename"`
 	ThumbnailFile    string    `json:"-"`
 	ThumbnailRelPath string    `json:"thumbnail_path"`
@@ -33,7 +33,7 @@ type VideoFile struct {
 // CamFS holds all files
 type CamFS struct {
 	VideoFiles []VideoFile
-	mutex      sync.Mutex
+	mutex      *sync.Mutex
 }
 
 var (
@@ -54,13 +54,14 @@ func (cfs CamFS) remove(rmFile string) {
 // FindByID will return the VideoFile with the given `id`
 func (cfs CamFS) FindByID(id string) (VideoFile, error) {
 	for i := range cfs.VideoFiles {
-		if cfs.VideoFiles[i].Id == id {
+		if cfs.VideoFiles[i].ID == id {
 			return cfs.VideoFiles[i], nil
 		}
 	}
 	return VideoFile{}, fmt.Errorf("VideoFile with Id %s not found", id)
 }
 
+// EventsSorted returns all the sorted events.
 func (cfs CamFS) EventsSorted() map[string]map[string][]VideoFile {
 	r := make(map[string]map[string][]VideoFile)
 	for i := range cfs.VideoFiles {
@@ -115,7 +116,7 @@ func indexFile(camfspath string, f os.FileInfo) {
 		log.Warn("Ignoring ", f.Name(), "(", f.Size(), " bytes)")
 	} else { // File is not corrupted or just a mp4 header
 		if f.Name()[len(f.Name())-4:] == ".mp4" { // If extension matches .mp4
-			v.Id = guuid.New().String()
+			v.ID = guuid.New().String()
 			v.Name = f.Name()
 			v.Size = f.Size()
 			v.FullPath = camfspath
