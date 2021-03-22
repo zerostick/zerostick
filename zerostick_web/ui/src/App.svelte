@@ -1,10 +1,15 @@
 <script>
-	export let name;
+	import Button from './common/Button.svelte'
+	import Events from './Events.svelte'
+	let events
+	export let name
 </script>
 
 <main>
 	<h1>Hello {name}!</h1>
 	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+	<Button>Add stuff</Button>
+	<Events {events} />
 </main>
 
 <style>
