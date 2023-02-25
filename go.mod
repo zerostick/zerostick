@@ -10,7 +10,7 @@ require (
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.0
 	github.com/xconstruct/go-pushbullet v0.0.0-20171206132031-67759df45fbb
-	golang.org/x/crypto v0.0.0-20200709230013-948cd5f35899
+	golang.org/x/crypto v0.1.0
 	gopkg.in/fsnotify.v1 v1.4.7
 )
 
